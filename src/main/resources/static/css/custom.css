@@ -1,3 +1,9 @@
+body {
+    color: #3e3630;  /* 2f2926 */
+}
+a {
+    color: #fb8c00;
+}
 .navbar-custom {
     border-top: 4px solid #fb8c00;
     background-color: #34302d;
@@ -36,6 +42,20 @@
 .navbar-custom .navbar-nav > .active > a:focus {
     color: #f1f1f1;
     background-color: #fb8c00;
+}
+.main-content {
+    padding-top: 24px;
+}
+.page-title {
+    font-size: 28px;
+    line-height: 30px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+.text-credits {
+    font-size: 10px;
+    line-height: 14px;
 }
 .footer {
     position: absolute;
