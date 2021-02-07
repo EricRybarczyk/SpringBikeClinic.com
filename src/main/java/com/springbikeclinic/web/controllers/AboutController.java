@@ -5,12 +5,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-public class IndexController {
+public class AboutController {
 
-    @RequestMapping({"", "/", "index"})
-    public String index(Model model) {
-        model.addAttribute("activeSection", "index");
-        return "index";
+    @RequestMapping("/about")
+    public String about(Model model) {
+        return "about";
     }
-
 }

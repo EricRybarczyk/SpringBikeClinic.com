@@ -20,24 +20,30 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-expand-md navbar-dark navbar-custom"><!--/* https://getbootstrap.com/docs/4.6/examples/navbars/ */-->
+    <nav class="navbar navbar-expand-md navbar-dark navbar-custom" th:with="view=${#httpServletRequest.getServletPath()}">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <img class="navbar-logo-icon" src="../../static/img/spring-bike-clinic-logo.png" th:src="@{/img/spring-bike-clinic-logo.png}" alt="logo">
+            <a class="navbar-brand" href="index.html" th:href="@{'/'}">
+                <span class="navbar-logo lni lni-32 lni-bi-cycle"></span>
+                <!-- img class="navbar-logo-icon" src="../../static/img/spring-bike-clinic-logo.png" th:src="@{/img/spring-bike-clinic-logo.png}" alt="logo" -->
                 spring bike clinic</a>
             <ul class="navbar-nav float-right">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">
+                <li class="nav-item" th:classappend="${#strings.startsWith(view,'/index') or view == '/' ? 'active' : ''}">
+                    <a class="nav-link" href="index.html" th:href="@{'/'}">
                         <span class="nav-item-icon lni lni-16 lni-home"></span>
                         <span>Home</span> <span class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
+                <li class="nav-item" th:classappend="${#strings.startsWith(view,'/about') ? 'active' : ''}">
+                    <a class="nav-link" href="about.html" th:href="@{'/about/'}">
+                        <span class="nav-item-icon lni lni-16 lni-star"></span><!-- lni-compass lin-code-alt -->
+                        <span>About</span></a>
+                </li>
+                <li class="nav-item" th:classappend="${#strings.startsWith(view,'/services') ? 'active' : ''}">
+                    <a class="nav-link" href="services.html" th:href="@{'/services/'}">
                         <span class="nav-item-icon lni lni-16 lni-cog"></span>
                         <span>Services</span></a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
+                <li class="nav-item" th:classappend="${#strings.startsWith(view,'/account') ? 'active' : ''}">
+                    <a class="nav-link" href="account.html" th:href="@{'/account/'}">
                         <span class="nav-item-icon lni lni-16 lni-user"></span>
                         <span>My Account</span></a>
                 </li>
