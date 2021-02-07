@@ -1,9 +1,20 @@
 body {
-    color: #3e3630;  /* 2f2926 */
+    color: #3e3630;
+    padding-bottom: 32px; /* allow for footer */
 }
 a {
     color: #fb8c00;
 }
+.action-link {
+    color: #5fa134;
+    text-decoration: none;
+}
+.action-link:hover {
+    color: #5fa134;
+    text-decoration: none;
+}
+
+/* --------------- Navbar --------------- */
 .navbar-custom {
     border-top: 4px solid #fb8c00;
     background-color: #34302d;
@@ -46,26 +57,57 @@ a {
     color: #f1f1f1;
     background-color: #fb8c00;
 }
+
+/* ------------ Page Content ------------ */
 .main-content {
     padding-top: 24px;
 }
-.page-title {
-    font-size: 28px;
-    line-height: 30px;
+.sidebar-section {
+    background-color: #fafafa;
+    border: 1px solid #f1f3f0;
+    border-radius: 9px;
+    box-shadow: 0 1px #f1f3f0;
+    margin-bottom: 24px;
+    margin-right: 18px;
+    padding: 10px;
+}
+h1 {
+    font-size: 32px;
+    line-height: 34px;
     font-weight: bold;
     margin-top: 0;
     margin-bottom: 18px;
 }
+h2 {
+    font-size: 24px;
+    line-height: 28px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 14px;
+}
+h3 {
+    font-size: 18px;
+    line-height: 20px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+/* -------------- Services -------------- */
+.service-type-container {
+    margin: 8px 0 8px 0;
+}
+.service-type-icon {
+    color: #d96000;
+}
+
+/* --------- Footnotes and Footer ------- */
 .text-credits {
     font-size: 10px;
     line-height: 14px;
 }
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
+.navbar-footer {
     height: 24px;
-    padding-top: 4px;
     background: #f4f4f4;
 }
 .footer-text {
@@ -74,4 +116,9 @@ a {
 }
 .footer-text > a {
     color: #1e88e5;
+}
+.abs-center-x {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }

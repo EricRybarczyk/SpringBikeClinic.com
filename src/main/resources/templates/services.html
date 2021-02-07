@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
 <head>
     <meta charset="UTF-8">
     <title>Services :: Spring Bike Clinic</title>
@@ -8,7 +8,30 @@
 
 <div class="container main-content" layout:fragment="page-content">
 
-    <h1>Services</h1>
+    <div class="row">
+        <div class="col-md-3">
+            <h1>Services</h1>
+            <section class="sidebar-section">Everyone at Spring Bike Clinic takes great pride in the high level of service we offer.
+                From derailleur adjustments to full suspension rebuilds, count on the expert mechanics
+                at Spring Bike Clinic to keep your wheels turning.
+            </section>
+        </div>
+        <div class="col-md-9">
+            <div th:each="workType : ${workTypeList}">
+                <div th:replace="fragments/serviceType :: serviceType (${workType})"></div>
+            </div>
+            <!--/* Row template for a Service Type */-->
+            <div class="row service-type-container" th:remove="all">
+                <div class="col-md-1 offset-md-1 text-right"><span class="lni lni-32 lni-cog service-type-icon"></span></div>
+                <div class="col-md-8">
+                    <h3>Service Type Name</h3>
+                    <p>Description of the service, what it includes, why it is good, whatever else we can say to fill in some space and make this look good.</p>
+                    <button class="btn btn-link float-right">schedule <span class="lni lni-16 lni-arrow-right-circle service-btn-link"></span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </div>
 
