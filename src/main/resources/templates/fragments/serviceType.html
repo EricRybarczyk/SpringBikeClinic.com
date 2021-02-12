@@ -7,8 +7,8 @@
 <body>
 
 <div class="row service-type-container" th:fragment="serviceType (workType)">
-    <div class="col-md-1 offset-md-1 text-right"><span class="lni lni-32 lni-cog service-type-icon"></span></div>
-    <div class="col-md-8">
+    <div class="col-md-1 text-right"><span class="lni lni-32 lni-cog service-type-icon"></span></div>
+    <div class="col-md-9">
         <!--/*@thymesVar id="workType" type="com.springbikeclinic.web.domain.WorkType"*/-->
         <h3 th:text="${workType.name}">Service Type Name</h3>
         <p th:text="${workType.description}">Description of the service, what it includes, why it is good, whatever else we can say to fill in some space and make this look good.</p>
