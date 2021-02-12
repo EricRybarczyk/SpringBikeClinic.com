@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 
 # static CSS/JS from CDN
+/src/main/resources/static/css/LineIcons.css
 /src/main/resources/static/css/bootstrap-4.6.0-dist/
 /src/main/resources/static/js/jquery-3.5.1.slim.min.js
 /src/main/resources/static/js/popper.min.*
