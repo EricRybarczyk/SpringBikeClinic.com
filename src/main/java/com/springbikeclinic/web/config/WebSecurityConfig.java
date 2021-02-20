@@ -13,11 +13,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .cors().and()
-                .authorizeRequests((requests) -> requests.anyRequest().authenticated())
+                .authorizeRequests(authorize -> {
+                    authorize
+                            .mvcMatchers("/h2-console/**").permitAll();  // TODO: DO NOT USE IN PRODUCTION
+                })
+                .authorizeRequests()
+                .anyRequest().authenticated().and()
                 .formLogin().and()
-                .httpBasic();
+                .httpBasic()
+                .and().csrf().ignoringAntMatchers("/h2-console/**");
 
-                // /services/schedule/
+        // H2 console config
+        http.headers().frameOptions().sameOrigin();
     }
 
 }
