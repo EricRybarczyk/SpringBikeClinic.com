@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
@@ -29,6 +30,7 @@ class ServicesControllerTest {
     @MockBean
     private WorkTypeServiceImpl workTypeService;
 
+    @WithMockUser("authenticatedUser")
     @Test
     void getServices() throws Exception {
         final List<WorkType> workTypes = TestData.getWorkTypesList();
@@ -41,6 +43,7 @@ class ServicesControllerTest {
                 .andExpect(view().name(EXPECTED_GET_SERVICES_VIEW_NAME));
     }
 
+    @WithMockUser("authenticatedUser")
     @Test
     void beginScheduleService() throws Exception {
         final WorkType workType = TestData.getSingleWorkType();
