@@ -21,7 +21,14 @@ class AboutControllerTest {
 
     @WithMockUser("authenticatedUser")
     @Test
-    void getAbout() throws Exception {
+    void getAboutAsAuthenticated_IsOk() throws Exception {
+        mockMvc.perform(get(GET_ABOUT_PATH))
+                .andExpect(status().isOk())
+                .andExpect(view().name(EXPECTED_ABOUT_VIEW_NAME));
+    }
+
+    @Test
+    void getAboutAsAnonymousUser_IsOk() throws Exception {
         mockMvc.perform(get(GET_ABOUT_PATH))
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPECTED_ABOUT_VIEW_NAME));

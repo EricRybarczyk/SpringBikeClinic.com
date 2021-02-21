@@ -21,7 +21,14 @@ class IndexControllerTest {
 
     @WithMockUser("authenticatedUser")
     @Test
-    void getIndexAsAuthenticatedUser() throws Exception {
+    void getIndexAsAuthenticatedUser_IsOk() throws Exception {
+        mockMvc.perform(get(GET_INDEX_PATH))
+                .andExpect(status().isOk())
+                .andExpect(view().name(EXPECTED_GET_INDEX_VIEW_NAME));
+    }
+
+    @Test
+    void getIndexAsAnonymousUser_IsOk() throws Exception {
         mockMvc.perform(get(GET_INDEX_PATH))
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPECTED_GET_INDEX_VIEW_NAME));

@@ -22,7 +22,13 @@ class AccountControllerTest {
 
     @WithMockUser("authenticatedUser")
     @Test
-    void getAccount() throws Exception {
+    void getAccountAsAuthenticatedUser_IsOk() throws Exception {
+        mockMvc.perform(get(GET_ACCOUNT_PATH))
+                .andExpect(status().isOk())
+                .andExpect(view().name(EXPECTED_ACCOUNT_VIEW_NAME));
+    }
+    @Test
+    void getAccountAsAnonymousUser_IsOk() throws Exception {
         mockMvc.perform(get(GET_ACCOUNT_PATH))
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPECTED_ACCOUNT_VIEW_NAME));

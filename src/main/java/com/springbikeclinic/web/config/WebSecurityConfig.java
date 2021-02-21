@@ -15,7 +15,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .authorizeRequests(authorize -> {
                     authorize
-                            .mvcMatchers("/h2-console/**").permitAll();  // TODO: DO NOT USE IN PRODUCTION
+                            // antMatcher vs mvcMatcher: favor mvcMatcher - https://stackoverflow.com/a/57373627/798642
+                            .mvcMatchers("/h2-console/**").permitAll()  // TODO: DO NOT USE IN PRODUCTION
+                            .mvcMatchers("/", "/css/**", "/fonts/**", "/img/**").permitAll()
+                            .mvcMatchers("/about", "/services", "/account").permitAll();
+                    // NOTE: Currently we intentionally block access to /services/schedule since login will be required for this feature
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated().and()
