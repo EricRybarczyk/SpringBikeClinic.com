@@ -1,6 +1,8 @@
 package com.springbikeclinic.web.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,7 +21,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                             // antMatcher vs mvcMatcher: favor mvcMatcher - https://stackoverflow.com/a/57373627/798642
                             .mvcMatchers("/h2-console/**").permitAll()  // TODO: DO NOT USE IN PRODUCTION
                             .mvcMatchers("/", "/css/**", "/fonts/**", "/img/**").permitAll()
-                            .mvcMatchers("/about", "/services", "/account").permitAll();
+                            .mvcMatchers("/about", "/services", "/account", "/account/create").permitAll();
                     // NOTE: Currently we intentionally block access to /services/schedule since login will be required for this feature
                 })
                 .authorizeRequests()
@@ -44,6 +46,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         // H2 console config
         http.headers().frameOptions().sameOrigin();
+    }
+
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 
 }
