@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -23,7 +24,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 })
                 .authorizeRequests()
                 .anyRequest().authenticated().and()
-                .formLogin().and()
+                .formLogin(loginConfigurer -> {
+                    loginConfigurer
+                            .loginProcessingUrl("/login")
+                            .loginPage("/account").permitAll()
+                            .successForwardUrl("/account")
+                            .defaultSuccessUrl("/account")
+                            .failureUrl("/account?error");
+                })
+                .logout(logoutConfigurer -> {
+                    logoutConfigurer
+                            // must specify GET since we are using a link (href) tag and Spring expects a POST by default
+                            .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                            .logoutSuccessUrl("/account?logout")
+                            .permitAll();
+                })
                 .httpBasic()
                 .and().csrf().ignoringAntMatchers("/h2-console/**");
 

@@ -5,6 +5,15 @@ body {
 a {
     color: #fb8c00;
 }
+a:hover {
+    color: #fb8c00;
+}
+a:focus {
+    color: #fb8c00;
+}
+a:active {
+    color: #fb8c00;
+}
 .action-link {
     color: #5fa134;
     text-decoration: none;
@@ -56,6 +65,42 @@ a {
 .navbar-custom .navbar-nav .active > a:focus {
     color: #f1f1f1;
     background-color: #fb8c00;
+}
+
+/* ------------ Navbar Tabs ------------- */
+.nav-site-link.active {
+    font-weight: bold;
+}
+.nav-site-link.active:hover {
+    cursor: default;
+}
+.nav-site-link:not(.active) {
+    color: #3e3630;
+}
+.nav-site-link:not(.active):hover {
+    color: #fb8c00;
+}
+
+/* ------------ Buttons ----------------- */
+.btn-site-primary {
+    color: #fafafa;
+    background-color: #fb8c00;
+    border-color: #fb8c00;
+}
+.btn-site-primary:hover {
+    color: #ffffff;
+    background-color: #f57c00;
+    border-color: #fb8c00;
+}
+.btn-site-primary:focus {
+    color: #ffffff;
+    background-color: #f57c00;
+    border-color: #fb8c00;
+}
+.btn-site-primary:active {
+    color: #ffffff;
+    background-color: #f57c00;
+    border-color: #fb8c00;
 }
 
 /* ------------ Page Content ------------ */

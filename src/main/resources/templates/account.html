@@ -1,14 +1,90 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout/layout}">
 <head>
     <meta charset="UTF-8">
-    <title>My Account :: Spring BIke Clinic</title>
+    <title>My Account :: Spring Bike Clinic</title>
 </head>
 <body>
 
 <div class="container main-content" layout:fragment="page-content">
 
-    <h1>My Account</h1>
+    <div class="row">
+        <div class="col-md-3">
+            <h1>My Account</h1>
+            <section class="sidebar-section">
+                Lorem Ipsum... why do I need an account, yadda yadda yadda
+            </section>
+        </div>
+        <section class="col-md-9">
+
+            <section id="login-or-create" sec:authorize="!isAuthenticated()">
+                <!-- Login Form -->
+                <ul class="nav nav-tabs" id="accountTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link nav-site-link active" id="existing-tab" href="#existing-account"
+                           data-toggle="tab" role="tab" aria-selected="true">Existing Customer</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link nav-site-link" id="create-tab" href="#create-account" data-toggle="tab"
+                           role="tab" aria-selected="false">Create My Account</a>
+                    </li>
+                </ul>
+                <div class="tab-content w-50" id="tabContent">
+                    <br>
+                    <div class="tab-pane fade show active" id="existing-account" role="tabpanel" aria-labelledby="existing-tab">
+                        <form class="form-signin" th:action="@{/login}" method="post">
+
+                            <label for="username" class="sr-only">Username</label>
+                            <input type="text" name="username" id="username" class="form-control" placeholder="Username" required autofocus>
+                            <br>
+
+                            <label for="password" class="sr-only">Password</label>
+                            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                            <br>
+
+                            <div class="checkbox mb-3" th:remove="all"><!--/* TODO: Remember Me functionality */-->
+                                <label>
+                                    <input type="checkbox" value="remember-me"> Remember me
+                                </label>
+                            </div>
+
+                            <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show mt-2 mb-4" role="alert">
+                                Sorry, invalid username or password
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span class="lni lni-16 lni-close" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show mt-2 mb-4" role="alert">
+                                You have been logged out
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span class="lni lni-16 lni-close" aria-hidden="true"></span>
+                                </button>
+                            </div>
+
+                            <button class="btn btn-site-primary" type="submit">Sign in</button>
+
+                        </form>
+                    </div>
+
+                    <!-- Create Account Form -->
+
+                    <div class="tab-pane fade" id="create-account" role="tabpanel" aria-labelledby="create-tab">
+                        Create Account Here
+                    </div>
+                </div>
+            </section>
+
+            <!-- Logged-in My Account Content -->
+
+            <div class="row" sec:authorize="isAuthenticated()">
+                <div class="col-md-12">
+                    <p th:text="'Welcome ' + ${#authentication?.principal?.username}">Username</p>
+                    <p><a th:href="@{/logout}">Log Out</a></p>
+                </div>
+            </div>
+
+        </section>
+    </div>
 
 </div>
 
