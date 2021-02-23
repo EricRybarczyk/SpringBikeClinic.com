@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Account Secondary Nav</title>
+</head>
+<body>
+<section class="pt-3 pr-3" sec:authorize="isAuthenticated()" th:fragment="accountSecondaryNav">
+    <a href="#" class="btn btn-site-outline-secondary btn-block my-3">Account Details</a>
+    <a href="#" class="btn btn-site-outline-secondary btn-block my-3">My Bikes</a>
+    <a href="#" class="btn btn-site-outline-secondary btn-block my-3">Service History</a>
+    <a href="#" th:href="@{/logout}" class="btn btn-site-outline-secondary btn-block my-3">Log Out</a>
+</section>
+</body>
+</html>
+

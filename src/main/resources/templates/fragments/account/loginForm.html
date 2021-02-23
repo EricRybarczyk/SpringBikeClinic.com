@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Form</title>
+</head>
+<body>
+<!--/*@thymesVar id="account" type="com.springbikeclinic.web.commands.AccountCommand"*/-->
+<div class="tab-pane fade show active" id="existing-account" role="tabpanel" aria-labelledby="existing-tab" th:fragment="loginForm">
+    <form th:action="@{/login}" method="post">
+
+        <label for="username" class="sr-only">Email address</label>
+        <input type="email" name="username" id="username" class="form-control" placeholder="Email address" required autofocus>
+        <br>
+
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+        <br>
+
+        <div class="checkbox mb-3" th:remove="all"><!--/* TODO: Remember Me functionality */-->
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+
+        <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show mt-2 mb-4" role="alert">
+            Sorry, invalid username or password
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span class="lni lni-16 lni-close" aria-hidden="true"></span>
+            </button>
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show mt-2 mb-4" role="alert">
+            You have been logged out
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span class="lni lni-16 lni-close" aria-hidden="true"></span>
+            </button>
+        </div>
+
+        <button class="btn btn-site-primary" type="submit">Sign In</button>
+
+    </form>
+</div>
+</body>
+</html>

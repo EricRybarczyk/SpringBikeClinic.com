@@ -15,19 +15,11 @@
             <section class="sidebar-section" sec:authorize="!isAuthenticated()">
                 Lorem Ipsum... why do I need an account, yadda yadda yadda
             </section>
-            <section class="pt-3 pr-3" sec:authorize="isAuthenticated()">
-                <button class="btn btn-site-outline-secondary btn-block my-3">Account Details</button>
-                <button class="btn btn-site-outline-secondary btn-block my-3">My Bikes</button>
-                <button class="btn btn-site-outline-secondary btn-block my-3">Service History</button>
-                <form th:action="@{/logout}" method="post">
-                    <button class="btn btn-site-outline-secondary btn-block my-3">Log Out</button>
-                </form>
-            </section>
+            <section th:replace="fragments/account/accountSecondaryNav :: accountSecondaryNav"></section>
         </div>
         <div class="col-md-9">
 
             <section id="login-or-create" sec:authorize="!isAuthenticated()">
-                <!-- Login Form -->
                 <ul class="nav nav-tabs" id="accountTabs" role="tablist">
                     <li class="nav-item" role="presentation">
                         <a class="nav-link nav-site-link active" id="existing-tab" href="#existing-account"
@@ -40,68 +32,13 @@
                 </ul>
                 <div class="tab-content w-50" id="tabContent">
                     <br>
-                    <div class="tab-pane fade show active" id="existing-account" role="tabpanel" aria-labelledby="existing-tab">
-                        <form th:action="@{/login}" method="post">
 
-                            <label for="username" class="sr-only">Email address</label>
-                            <input type="email" name="username" id="username" class="form-control" placeholder="Email address" required autofocus>
-                            <br>
-
-                            <label for="password" class="sr-only">Password</label>
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
-                            <br>
-
-                            <div class="checkbox mb-3" th:remove="all"><!--/* TODO: Remember Me functionality */-->
-                                <label>
-                                    <input type="checkbox" value="remember-me"> Remember me
-                                </label>
-                            </div>
-
-                            <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show mt-2 mb-4" role="alert">
-                                Sorry, invalid username or password
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span class="lni lni-16 lni-close" aria-hidden="true"></span>
-                                </button>
-                            </div>
-                            <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show mt-2 mb-4" role="alert">
-                                You have been logged out
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span class="lni lni-16 lni-close" aria-hidden="true"></span>
-                                </button>
-                            </div>
-
-                            <button class="btn btn-site-primary" type="submit">Sign In</button>
-
-                        </form>
-                    </div>
+                    <!-- Login Form -->
+                    <div th:replace="fragments/account/loginForm :: loginForm"></div>
 
                     <!-- Create Account Form -->
+                    <div th:replace="fragments/account/createAccountForm :: createAccountForm"></div>
 
-                    <div class="tab-pane fade" id="create-account" role="tabpanel" aria-labelledby="create-tab">
-                        <form th:object="${account}" th:action="@{/account/create/}" method="post">
-                            <label for="firstName" class="sr-only">First Name</label>
-                            <input type="text" name="firstName" id="firstName" class="form-control" placeholder="First Name" required autofocus>
-                            <br>
-
-                            <label for="lastName" class="sr-only">Last Name</label>
-                            <input type="text" name="lastName" id="lastName" class="form-control" placeholder="Last Name" required>
-                            <br>
-
-                            <label for="email" class="sr-only">Username</label>
-                            <input type="email" name="email" id="email" class="form-control" placeholder="Email address" required>
-                            <br>
-
-                            <label for="password" class="sr-only">Password</label>
-                            <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
-                            <br>
-
-                            <label for="confirmPassword" class="sr-only">Confirm Password</label>
-                            <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Confirm Password" required>
-                            <br>
-
-                            <button class="btn btn-site-primary" type="submit">Create Account</button>
-                        </form>
-                    </div>
                 </div>
             </section>
 
