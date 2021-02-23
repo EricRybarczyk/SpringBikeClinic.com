@@ -1,15 +1,19 @@
 package com.springbikeclinic.web.commands;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class AccountCommand {
 
-    private String createUsername;
-    private String createPassword;
+    private String username;
+    private String password;
     private String confirmPassword;
+    private String firstName;
+    private String lastName;
 
 }

@@ -28,6 +28,14 @@ public class SecurityUser implements UserDetails {
         }
     }
 
+    public String getFirstName() {
+        return user.getFirstName();
+    }
+
+    public String getLastName() {
+        return user.getLastName();
+    }
+
     @Override
     public String getPassword() {
         return user.getPassword();

@@ -103,6 +103,26 @@ a:active {
     border-color: #fb8c00;
 }
 
+.btn-site-outline-secondary {
+    color: #3e3630;
+    border-color: #3e3630;
+}
+.btn-site-outline-secondary:hover {
+    color: #fafafa;
+    background-color: #3e3630;
+    border-color: #3e3630;
+}
+.btn-site-outline-secondary:focus {
+    color: #fafafa;
+    background-color: #3e3630;
+    border-color: #3e3630;
+}
+.btn-site-outline-secondary:active {
+    color: #fafafa;
+    background-color: #3e3630;
+    border-color: #3e3630;
+}
+
 /* ------------ Page Content ------------ */
 .main-content {
     padding-top: 24px;

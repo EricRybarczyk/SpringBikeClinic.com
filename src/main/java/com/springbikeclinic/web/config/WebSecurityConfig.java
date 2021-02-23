@@ -6,7 +6,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -37,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .logout(logoutConfigurer -> {
                     logoutConfigurer
                             // must specify GET since we are using a link (href) tag and Spring expects a POST by default
-                            .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                            // .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
                             .logoutSuccessUrl("/account?logout")
                             .permitAll();
                 })

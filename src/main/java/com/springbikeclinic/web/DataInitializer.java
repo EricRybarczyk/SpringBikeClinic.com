@@ -51,12 +51,16 @@ public class DataInitializer implements CommandLineRunner {
         userRepository.save(User.builder()
                 .username("mech")
                 .password(passwordEncoder.encode("wrench"))
+                .firstName("Johnny")
+                .lastName("Craftsman")
                 .authority(authorityMechanic)
                 .build());
 
         userRepository.save(User.builder()
                 .username("bike")
                 .password(passwordEncoder.encode("password"))
+                .firstName("Rad")
+                .lastName("Rider")
                 .authority(authorityCustomer)
                 .build());
 

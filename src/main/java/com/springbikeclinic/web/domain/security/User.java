@@ -19,6 +19,8 @@ public class User {
 
     private String username;
     private String password;
+    private String firstName;
+    private String lastName;
 
     @Singular
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
@@ -42,10 +44,12 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, String password, Set<Authority> authorities, Boolean accountNonExpired, Boolean accountNonLocked, Boolean credentialsNonExpired, Boolean enabled) {
+    public User(Long id, String username, String password, String firstName, String lastName, Set<Authority> authorities, Boolean accountNonExpired, Boolean accountNonLocked, Boolean credentialsNonExpired, Boolean enabled) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.authorities = authorities;
         this.accountNonExpired = accountNonExpired;
         this.accountNonLocked = accountNonLocked;
@@ -53,9 +57,8 @@ public class User {
         this.enabled = enabled;
     }
 
-    public User(Long id, String username, String password, Set<Authority> authorities) {
-        this(id, username, password, authorities, true, true, true, true);
+    public User(Long id, String username, String password, String firstName, String lastName, Set<Authority> authorities) {
+        this(id, username, password, firstName, lastName, authorities, true, true, true, true);
     }
-
 
 }

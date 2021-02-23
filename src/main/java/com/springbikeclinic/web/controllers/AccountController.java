@@ -28,27 +28,41 @@ public class AccountController {
 
     @RequestMapping("account")
     public String account(Model model) {
-        model.addAttribute("account", new AccountCommand());
+        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+            SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            model.addAttribute("account",
+                    AccountCommand.builder()
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .username(user.getUsername())
+                            .build());
+        }
+        else {
+            model.addAttribute("account", new AccountCommand());
+        }
+
         return "account";
     }
 
     @PostMapping("account/create")
     public String createAccount(final HttpServletRequest request, @ModelAttribute AccountCommand command) {
-        log.debug("POST Request to create an account for username: {}", command.getCreateUsername());
+        log.debug("POST Request to create an account for username: {}", command.getUsername());
 
         // TODO: validation - password & confirm password must match
 
         // TODO: handle username already exists
 
         final User user = User.builder()
-                .username(command.getCreateUsername())
-                .password(command.getCreatePassword())
+                .username(command.getUsername())
+                .password(command.getPassword())
+                .firstName(command.getFirstName())
+                .lastName(command.getLastName())
                 .build();
 
         userDetailsManager.createUser(new SecurityUser(user));
 
         // log them in
-        authenticateUser(request, command.getCreateUsername(), command.getCreatePassword());
+        authenticateUser(request, command.getUsername(), command.getPassword());
 
         return "redirect:/account";
     }
