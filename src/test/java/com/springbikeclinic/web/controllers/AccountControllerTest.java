@@ -3,6 +3,9 @@ package com.springbikeclinic.web.controllers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -19,6 +22,12 @@ class AccountControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private UserDetailsManager userDetailsManager;
+
+    @MockBean
+    private AuthenticationManager authenticationManager;
 
     @WithMockUser("authenticatedUser")
     @Test

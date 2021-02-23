@@ -25,8 +25,11 @@ public class JpaUserDetailsManager implements UserDetailsManager {
     @Override
     public void createUser(UserDetails user) {
         Authority authorityCustomer = authorityRepository.findByRole("CUSTOMER").orElseThrow(() -> new RuntimeException("Missing Role: CUSTOMER"));
+        SecurityUser securityUser = (SecurityUser) user;
         userRepository.save(User.builder()
-                .username(user.getUsername())
+                .firstName(securityUser.getFirstName())
+                .lastName(securityUser.getLastName())
+                .email(user.getUsername())
                 .password(passwordEncoder.encode(user.getPassword()))
                 .authority(authorityCustomer)
                 .build());
@@ -49,15 +52,15 @@ public class JpaUserDetailsManager implements UserDetailsManager {
 
     @Override
     public boolean userExists(String username) {
-        return userRepository.findByUsername(username).isPresent();
+        return userRepository.findByEmail(username).isPresent();
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        final User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Username " + username + " was not found"));
+        final User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " was not found"));
 
-        log.debug("User retrieved from JPA: Username: {} with authorities count: {}", user.getUsername(), user.getAuthorities().size());
+        log.debug("User retrieved from JPA: Username: {} with authorities count: {}", user.getEmail(), user.getAuthorities().size());
 
         return new SecurityUser(user);
     }

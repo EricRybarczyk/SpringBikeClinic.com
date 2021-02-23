@@ -17,7 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String username;
+    private String email;
     private String password;
     private String firstName;
     private String lastName;
@@ -44,9 +44,9 @@ public class User {
     public User() {
     }
 
-    public User(Long id, String username, String password, String firstName, String lastName, Set<Authority> authorities, Boolean accountNonExpired, Boolean accountNonLocked, Boolean credentialsNonExpired, Boolean enabled) {
+    public User(Long id, String email, String password, String firstName, String lastName, Set<Authority> authorities, Boolean accountNonExpired, Boolean accountNonLocked, Boolean credentialsNonExpired, Boolean enabled) {
         this.id = id;
-        this.username = username;
+        this.email = email;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -57,8 +57,8 @@ public class User {
         this.enabled = enabled;
     }
 
-    public User(Long id, String username, String password, String firstName, String lastName, Set<Authority> authorities) {
-        this(id, username, password, firstName, lastName, authorities, true, true, true, true);
+    public User(Long id, String email, String password, String firstName, String lastName, Set<Authority> authorities) {
+        this(id, email, password, firstName, lastName, authorities, true, true, true, true);
     }
 
 }

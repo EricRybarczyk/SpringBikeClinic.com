@@ -28,13 +28,14 @@ public class AccountController {
 
     @RequestMapping("account")
     public String account(Model model) {
-        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()) {
+        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
+                && SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof SecurityUser) {
             SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             model.addAttribute("account",
                     AccountCommand.builder()
                             .firstName(user.getFirstName())
                             .lastName(user.getLastName())
-                            .username(user.getUsername())
+                            .email(user.getUsername())
                             .build());
         }
         else {
@@ -46,14 +47,14 @@ public class AccountController {
 
     @PostMapping("account/create")
     public String createAccount(final HttpServletRequest request, @ModelAttribute AccountCommand command) {
-        log.debug("POST Request to create an account for username: {}", command.getUsername());
+        log.debug("POST Request to create an account for username: {}", command.getEmail());
 
         // TODO: validation - password & confirm password must match
 
         // TODO: handle username already exists
 
         final User user = User.builder()
-                .username(command.getUsername())
+                .email(command.getEmail())
                 .password(command.getPassword())
                 .firstName(command.getFirstName())
                 .lastName(command.getLastName())
@@ -62,7 +63,7 @@ public class AccountController {
         userDetailsManager.createUser(new SecurityUser(user));
 
         // log them in
-        authenticateUser(request, command.getUsername(), command.getPassword());
+        authenticateUser(request, command.getEmail(), command.getPassword());
 
         return "redirect:/account";
     }

@@ -49,7 +49,7 @@ public class DataInitializer implements CommandLineRunner {
         Authority authorityCustomer = authorityRepository.save(Authority.builder().role("CUSTOMER").build());
 
         userRepository.save(User.builder()
-                .username("mech")
+                .email("mech@spring.dev")
                 .password(passwordEncoder.encode("wrench"))
                 .firstName("Johnny")
                 .lastName("Craftsman")
@@ -57,7 +57,7 @@ public class DataInitializer implements CommandLineRunner {
                 .build());
 
         userRepository.save(User.builder()
-                .username("bike")
+                .email("bike@bike.com")
                 .password(passwordEncoder.encode("password"))
                 .firstName("Rad")
                 .lastName("Rider")
