@@ -13,10 +13,12 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @Controller
 @RequiredArgsConstructor
@@ -46,8 +48,13 @@ public class AccountController {
     }
 
     @PostMapping("account/create")
-    public String createAccount(final HttpServletRequest request, @ModelAttribute AccountCommand command) {
+    public String createAccount(final HttpServletRequest request, @ModelAttribute("account") @Valid AccountCommand command, BindingResult bindingResult) {
         log.debug("POST Request to create an account for username: {}", command.getEmail());
+
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(e -> log.debug(e.toString()));
+            return "account";
+        }
 
         // TODO: validation - password & confirm password must match
 

@@ -8,10 +8,21 @@
 
 <!--/*@thymesVar id="account" type="com.springbikeclinic.web.commands.AccountCommand"*/-->
 <div class="container main-content" layout:fragment="page-content">
+    <script>
+        $(document).ready(function(){
+            $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
+                localStorage.setItem('activeTab', $(e.target).attr('href'));
+            });
+            const activeTab = localStorage.getItem('activeTab');
+            if(activeTab){
+                $('#accountTabs a[href="' + activeTab + '"]').tab('show');
+            }
+        });
+    </script>
 
     <div class="row">
         <div class="col-md-3">
-            <h1>My Account</h1>
+            <h1 class="ml-1">My Account</h1>
             <section class="sidebar-section" sec:authorize="!isAuthenticated()">
                 Lorem Ipsum... why do I need an account, yadda yadda yadda
             </section>
