@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<!--/*@thymesVar id="account" type="com.springbikeclinic.web.commands.AccountCommand"*/-->
+<!--/*@thymesVar id="createAccountDto" type="com.springbikeclinic.web.dto.CreateAccountDto"*/-->
 <div class="container main-content" layout:fragment="page-content">
     <script>
         $(document).ready(function(){
@@ -57,7 +57,7 @@
 
             <div class="row" sec:authorize="isAuthenticated()">
                 <div class="col-md-12">
-                    <p th:text="'Welcome ' + ${account?.firstName}">Welcome</p>
+                    <p th:text="'Welcome ' + ${createAccountDto?.firstName}">Welcome</p>
                 </div>
             </div>
 

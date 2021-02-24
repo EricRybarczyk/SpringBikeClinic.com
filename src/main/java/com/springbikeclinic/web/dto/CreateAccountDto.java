@@ -1,10 +1,10 @@
-package com.springbikeclinic.web.commands;
+package com.springbikeclinic.web.dto;
 
 import lombok.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 
 @Getter
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AccountCommand {
+public class CreateAccountDto {
 
     @NotNull
     @NotEmpty
@@ -21,12 +21,12 @@ public class AccountCommand {
 
     @NotNull
     @NotEmpty
-    @Min(value = 8, message = "Must be at least 8 characters")
-    private String password;
+    @Size(min = 8, max = 255, message = "Must be at least 8 characters")
+    private String createPassword;
 
     @NotNull
     @NotEmpty
-    @Min(value = 8, message = "Must be at least 8 characters")
+    @Size(min = 8, max = 255, message = "Must be at least 8 characters")
     private String confirmPassword;
 
     @NotNull

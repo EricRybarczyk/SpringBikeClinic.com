@@ -1,8 +1,9 @@
 package com.springbikeclinic.web.controllers;
 
-import com.springbikeclinic.web.commands.AccountCommand;
 import com.springbikeclinic.web.domain.security.SecurityUser;
 import com.springbikeclinic.web.domain.security.User;
+import com.springbikeclinic.web.dto.CreateAccountDto;
+import com.springbikeclinic.web.dto.LoginDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,23 +34,25 @@ public class AccountController {
         if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
                 && SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof SecurityUser) {
             SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            model.addAttribute("account",
-                    AccountCommand.builder()
+            model.addAttribute("createAccountDto",
+                    CreateAccountDto.builder()
                             .firstName(user.getFirstName())
                             .lastName(user.getLastName())
                             .email(user.getUsername())
                             .build());
         }
         else {
-            model.addAttribute("account", new AccountCommand());
+            model.addAttribute("createAccountDto", new CreateAccountDto());
         }
+
+        model.addAttribute("loginDto", new LoginDto());
 
         return "account";
     }
 
     @PostMapping("account/create")
-    public String createAccount(final HttpServletRequest request, @ModelAttribute("account") @Valid AccountCommand command, BindingResult bindingResult) {
-        log.debug("POST Request to create an account for username: {}", command.getEmail());
+    public String createAccount(final HttpServletRequest request, @ModelAttribute("account") @Valid CreateAccountDto account, BindingResult bindingResult) {
+        log.debug("POST Request to create an account for username: {}", account.getEmail());
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(e -> log.debug(e.toString()));
@@ -61,16 +64,16 @@ public class AccountController {
         // TODO: handle username already exists
 
         final User user = User.builder()
-                .email(command.getEmail())
-                .password(command.getPassword())
-                .firstName(command.getFirstName())
-                .lastName(command.getLastName())
+                .email(account.getEmail())
+                .password(account.getCreatePassword())
+                .firstName(account.getFirstName())
+                .lastName(account.getLastName())
                 .build();
 
         userDetailsManager.createUser(new SecurityUser(user));
 
         // log them in
-        authenticateUser(request, command.getEmail(), command.getPassword());
+        authenticateUser(request, account.getEmail(), account.getCreatePassword());
 
         return "redirect:/account";
     }
