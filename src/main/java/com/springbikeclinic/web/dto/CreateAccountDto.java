@@ -1,5 +1,6 @@
 package com.springbikeclinic.web.dto;
 
+import com.springbikeclinic.web.security.validation.PasswordMatches;
 import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
@@ -12,6 +13,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@PasswordMatches(message = "Both passwords must match")
 public class CreateAccountDto {
 
     @NotNull

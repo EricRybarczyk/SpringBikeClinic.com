@@ -51,29 +51,31 @@ public class AccountController {
     }
 
     @PostMapping("account/create")
-    public String createAccount(final HttpServletRequest request, @ModelAttribute("account") @Valid CreateAccountDto account, BindingResult bindingResult) {
-        log.debug("POST Request to create an account for username: {}", account.getEmail());
+    public String createAccount(final HttpServletRequest request, @ModelAttribute("createAccountDto") @Valid CreateAccountDto createAccountDto, BindingResult bindingResult, Model model) {
+        log.debug("POST Request to create an account for username: {}", createAccountDto.getEmail());
 
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(e -> log.debug(e.toString()));
             return "account";
         }
 
-        // TODO: validation - password & confirm password must match
-
         // TODO: handle username already exists
+        if (userDetailsManager.userExists(createAccountDto.getEmail())) {
+            model.addAttribute("duplicateEmailError", Boolean.TRUE);
+            return "account";
+        }
 
         final User user = User.builder()
-                .email(account.getEmail())
-                .password(account.getCreatePassword())
-                .firstName(account.getFirstName())
-                .lastName(account.getLastName())
+                .email(createAccountDto.getEmail())
+                .password(createAccountDto.getCreatePassword())
+                .firstName(createAccountDto.getFirstName())
+                .lastName(createAccountDto.getLastName())
                 .build();
 
         userDetailsManager.createUser(new SecurityUser(user));
 
         // log them in
-        authenticateUser(request, account.getEmail(), account.getCreatePassword());
+        authenticateUser(request, createAccountDto.getEmail(), createAccountDto.getCreatePassword());
 
         return "redirect:/account";
     }
