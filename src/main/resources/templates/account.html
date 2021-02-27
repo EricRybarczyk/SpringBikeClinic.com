@@ -11,9 +11,9 @@
     <script>
         $(document).ready(function(){
             $('a[data-toggle="tab"]').on('show.bs.tab', function(e) {
-                localStorage.setItem('activeTab', $(e.target).attr('href'));
+                localStorage.setItem('activeAccountTab', $(e.target).attr('href'));
             });
-            const activeTab = localStorage.getItem('activeTab');
+            const activeTab = localStorage.getItem('activeAccountTab');
             if(activeTab){
                 $('#accountTabs a[href="' + activeTab + '"]').tab('show');
             }

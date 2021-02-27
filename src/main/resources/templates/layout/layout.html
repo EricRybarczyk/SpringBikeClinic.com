@@ -74,5 +74,13 @@
     </div>
 </nav>
 
+<!--/* having the active tab only makes sense while interacting with the Create Account part of the My Account screen */-->
+<script>
+    if (window.location.href.indexOf("/account") === -1 || window.location.href.indexOf("logout") > -1) {
+        if (localStorage.getItem('activeAccountTab')) {
+            localStorage.removeItem('activeAccountTab');
+        }
+    }
+</script>
 </body>
 </html>
