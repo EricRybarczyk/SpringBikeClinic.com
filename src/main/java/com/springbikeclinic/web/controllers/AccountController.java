@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.security.Principal;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,10 +31,12 @@ public class AccountController {
     private final AuthenticationManager authenticationManager;
 
     @RequestMapping("account")
-    public String account(Model model) {
-        if (SecurityContextHolder.getContext().getAuthentication().isAuthenticated()
-                && SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof SecurityUser) {
-            SecurityUser user = (SecurityUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public String account(Model model, Principal principal) {
+        if (principal == null) {
+            model.addAttribute("createAccountDto", new CreateAccountDto());
+            model.addAttribute("loginDto", new LoginDto());
+        } else {
+            SecurityUser user = (SecurityUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
             model.addAttribute("createAccountDto",
                     CreateAccountDto.builder()
                             .firstName(user.getFirstName())
@@ -41,11 +44,6 @@ public class AccountController {
                             .email(user.getUsername())
                             .build());
         }
-        else {
-            model.addAttribute("createAccountDto", new CreateAccountDto());
-        }
-
-        model.addAttribute("loginDto", new LoginDto());
 
         return "account";
     }
@@ -59,7 +57,6 @@ public class AccountController {
             return "account";
         }
 
-        // TODO: handle username already exists
         if (userDetailsManager.userExists(createAccountDto.getEmail())) {
             model.addAttribute("duplicateEmailError", Boolean.TRUE);
             return "account";
