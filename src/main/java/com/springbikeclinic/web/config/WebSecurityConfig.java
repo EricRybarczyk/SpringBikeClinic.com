@@ -1,5 +1,7 @@
 package com.springbikeclinic.web.config;
 
+import com.springbikeclinic.web.security.StandAloneAuthenticator;
+import com.springbikeclinic.web.security.StandAloneAuthenticatorImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -52,6 +54,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Bean
+    public StandAloneAuthenticator standAloneAuthenticator() throws Exception {
+        return new StandAloneAuthenticatorImpl(authenticationManagerBean());
     }
 
 }
