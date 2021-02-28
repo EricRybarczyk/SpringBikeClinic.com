@@ -36,7 +36,7 @@ class ServicesControllerTest {
 
     @WithMockUser("authenticatedUser")
     @Test
-    void getServicesAsAuthenticatedUser_IsOk() throws Exception {
+    void getServices_asAuthenticatedUser_IsOk() throws Exception {
         final List<WorkType> workTypes = TestData.getWorkTypesList();
         when(workTypeService.listWorkTypes()).thenReturn(workTypes);
 
@@ -46,8 +46,9 @@ class ServicesControllerTest {
                 .andExpect(model().attribute("workTypeList", workTypes))
                 .andExpect(view().name(EXPECTED_GET_SERVICES_VIEW_NAME));
     }
+
     @Test
-    void getServicesAsAnonymousUser_IsOk() throws Exception {
+    void getServices_asAnonymousUser_IsOk() throws Exception {
         final List<WorkType> workTypes = TestData.getWorkTypesList();
         when(workTypeService.listWorkTypes()).thenReturn(workTypes);
 
@@ -60,7 +61,7 @@ class ServicesControllerTest {
 
     @WithMockUser("authenticatedUser")
     @Test
-    void beginScheduleServiceAsAuthenticatedUser_IsOk() throws Exception {
+    void beginScheduleService_asAuthenticatedUser_IsOk() throws Exception {
         final WorkType workType = TestData.getSingleWorkType();
         when(workTypeService.getWorkType(anyLong())).thenReturn(workType);
 
@@ -71,11 +72,26 @@ class ServicesControllerTest {
     }
 
     @Test
-    void beginScheduleServiceAsAnonymousUser_IsUnauthorized() throws Exception {
+    void beginScheduleService_asAnonymousUser_IsUnauthorized() throws Exception {
         final WorkType workType = TestData.getSingleWorkType();
         when(workTypeService.getWorkType(anyLong())).thenReturn(workType);
 
         mockMvc.perform(get(GET_SCHEDULE_SERVICE_PATH + "/1"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @WithMockUser("authenticatedUser")
+    @Test
+    void getScheduleServiceWithoutIdPathVariable_asAuthenticatedUser_isRedirectToMainServicesListing() throws Exception {
+        // This is NOT an intended valid request path, but would be a simple thing for someone to try and should be handled gracefully
+        mockMvc.perform(get(GET_SCHEDULE_SERVICE_PATH))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void getScheduleServiceWithoutIdPathVariable_asUnauthenticatedUser_isUnauthorized() throws Exception {
+        // This is NOT an intended valid request path, but would be a simple thing for someone to try and should be handled gracefully
+        mockMvc.perform(get(GET_SCHEDULE_SERVICE_PATH))
                 .andExpect(status().isUnauthorized());
     }
 

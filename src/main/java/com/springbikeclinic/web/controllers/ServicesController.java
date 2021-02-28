@@ -24,6 +24,14 @@ public class ServicesController {
         return "services";
     }
 
+    // Handle a potential url mistake of missing {workTypeId} path var by redirecting gracefully.
+    // This is NOT an intended valid request path, but would be a simple thing for someone to try.
+    // Note this is still a protected resource so non-authenticated user will get a 401 first.
+    @RequestMapping("/services/schedule")
+    public String services() {
+        return "redirect:/services";
+    }
+
     @RequestMapping("/services/schedule/{workTypeId}")
     public String scheduleService(Model model, @PathVariable Long workTypeId) {
         final WorkType workType = workTypeService.getWorkType(workTypeId);
