@@ -21,8 +21,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AccountController.class)
 @ExtendWith(MockitoExtension.class)
@@ -120,6 +119,42 @@ class AccountControllerTest {
                 .firstName("Firstname")
                 .lastName("Lastname")
                 .build();
+    }
+
+    @Test
+    void postCreateAccount_withDuplicateUserEmail_accountNotCreated() throws Exception {
+        when(userDetailsManager.userExists(any(String.class))).thenReturn(true);
+
+        mockMvc.perform(post(POST_CREATE_ACCOUNT_PATH)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .flashAttr("createAccountDto", getCreateAccountDto())
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("duplicateEmailError"))
+                .andExpect(view().name(EXPECTED_ACCOUNT_VIEW_NAME));
+
+        verify(userDetailsManager, times(0)).createUser(any(UserDetails.class));
+        verifyNoInteractions(standAloneAuthenticator);
+    }
+
+    @Test
+    void postCreateAccount_withInvalidInput_validationFailsAndNoAccountCreated() throws Exception {
+        mockMvc.perform(post(POST_CREATE_ACCOUNT_PATH)
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("firstName", "firsty")
+                .param("lastName", "")              // empty is not valid
+                .param("email", "not-email")        // not valid email format
+                .param("createPassword", "asdf")
+                .param("confirmPassword", "diff")   // passwords do not match
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("createAccountDto","lastName"))
+                .andExpect(model().attributeHasFieldErrors("createAccountDto","email"))
+                .andExpect(model().attributeHasFieldErrors("createAccountDto","confirmPassword"))
+                .andExpect(view().name(EXPECTED_ACCOUNT_VIEW_NAME));
+
+        verifyNoInteractions(userDetailsManager);
+        verifyNoInteractions(standAloneAuthenticator);
     }
 
 }
