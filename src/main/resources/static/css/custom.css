@@ -103,6 +103,27 @@ a:active {
     border-color: #fb8c00;
 }
 
+.btn-site-secondary {
+    color: #fafafa;
+    background-color: #3e3630;
+    border-color: #3e3630;
+}
+.btn-site-secondary:hover {
+    color: #ffffff;
+    background-color: #38302c;
+    border-color: #3e3630;
+}
+.btn-site-secondary:focus {
+    color: #ffffff;
+    background-color: #38302c;
+    border-color: #3e3630;
+}
+.btn-site-secondary:active {
+    color: #ffffff;
+    background-color: #38302c;
+    border-color: #3e3630;
+}
+
 .btn-site-outline-secondary {
     color: #3e3630;
     border-color: #3e3630;

@@ -1,4 +1,4 @@
-package com.springbikeclinic.web.controllers;
+package com.springbikeclinic.web;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +51,27 @@ class WebSecurityConfigIntegrationTest {
     @Test
     void getProtectedResource_asUnauthenticatedRequest_isUnauthorized() throws Exception {
         mockMvc.perform(get("/services/schedule/1")
+                .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getAccountDetail_asUnauthenticatedRequest_isUnauthorized() throws Exception {
+        mockMvc.perform(get("/account/details")
+                .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getAccountBikes_asUnauthenticatedRequest_isUnauthorized() throws Exception {
+        mockMvc.perform(get("/account/bikes")
+                .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void getAccountHistory_asUnauthenticatedRequest_isUnauthorized() throws Exception {
+        mockMvc.perform(get("/account/history")
                 .with(csrf()))
                 .andExpect(status().isUnauthorized());
     }

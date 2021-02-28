@@ -28,8 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 class AccountControllerTest {
 
-    private static final String GET_ACCOUNT_PATH = "/account";
+    private static final String GET_ACCOUNT_BASE_PATH = "/account";
     private static final String EXPECTED_ACCOUNT_VIEW_NAME = "account";
+    private static final String EXPECTED_ACCOUNT_DETAILS_VIEW_NAME = "account/details";
+    private static final String EXPECTED_ACCOUNT_BIKES_VIEW_NAME = "account/bikes";
+    private static final String EXPECTED_ACCOUNT_HISTORY_NAME = "account/history";
     private static final String POST_CREATE_ACCOUNT_PATH = "/account/create";
     private static final String EXPECTED_CREATE_ACCOUNT_RESULT_VIEW_NAME = "redirect:/account";
 
@@ -49,21 +52,45 @@ class AccountControllerTest {
 
     @WithMockCustomUser
     @Test
-    void getAccountAsAuthenticatedUser_IsOk() throws Exception {
-        mockMvc.perform(get(GET_ACCOUNT_PATH))
+    void getAccount_asAuthenticatedUser_isOk() throws Exception {
+        mockMvc.perform(get(GET_ACCOUNT_BASE_PATH))
+                .andExpect(status().isOk())
+                .andExpect(view().name(EXPECTED_ACCOUNT_DETAILS_VIEW_NAME));
+    }
+
+    @Test
+    void getAccount_asAnonymousUser_isOk() throws Exception {
+        mockMvc.perform(get(GET_ACCOUNT_BASE_PATH))
                 .andExpect(status().isOk())
                 .andExpect(view().name(EXPECTED_ACCOUNT_VIEW_NAME));
     }
 
+    @WithMockCustomUser
     @Test
-    void getAccountAsAnonymousUser_IsOk() throws Exception {
-        mockMvc.perform(get(GET_ACCOUNT_PATH))
+    void getAccountDetails_asAuthenticatedUser_isOk() throws Exception {
+        mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/details"))
                 .andExpect(status().isOk())
-                .andExpect(view().name(EXPECTED_ACCOUNT_VIEW_NAME));
+                .andExpect(view().name(EXPECTED_ACCOUNT_DETAILS_VIEW_NAME));
+    }
+
+    @WithMockCustomUser
+    @Test
+    void getAccountBikes_asAuthenticatedUser_isOk() throws Exception {
+        mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/bikes"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(EXPECTED_ACCOUNT_BIKES_VIEW_NAME));
+    }
+
+    @WithMockCustomUser
+    @Test
+    void getAccountHistory_asAuthenticatedUser_isOk() throws Exception {
+        mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/history"))
+                .andExpect(status().isOk())
+                .andExpect(view().name(EXPECTED_ACCOUNT_HISTORY_NAME));
     }
 
     @Test
-    void postCreateAccount_WithValidInput_accountIsCreated() throws Exception {
+    void postCreateAccount_withValidInput_accountIsCreated() throws Exception {
         when(userDetailsManager.userExists(any(String.class))).thenReturn(false);
 
         final CreateAccountDto createAccountDto = getCreateAccountDto();

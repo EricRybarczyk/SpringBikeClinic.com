@@ -3,6 +3,7 @@ package com.springbikeclinic.web.controllers;
 import com.springbikeclinic.web.domain.security.SecurityUser;
 import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.CreateAccountDto;
+import com.springbikeclinic.web.dto.CustomerAccountDto;
 import com.springbikeclinic.web.dto.LoginDto;
 import com.springbikeclinic.web.security.StandAloneAuthenticator;
 import lombok.RequiredArgsConstructor;
@@ -27,22 +28,45 @@ public class AccountController {
     private final UserDetailsManager userDetailsManager;
     private final StandAloneAuthenticator standAloneAuthenticator;
 
+    private static final String MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT = "customerAccountDto";
+
     @RequestMapping("account")
     public String account(Model model, Principal principal) {
         if (principal == null) {
             model.addAttribute("createAccountDto", new CreateAccountDto());
             model.addAttribute("loginDto", new LoginDto());
+            return "account";
         } else {
-            SecurityUser user = (SecurityUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-            model.addAttribute("createAccountDto",
-                    CreateAccountDto.builder()
-                            .firstName(user.getFirstName())
-                            .lastName(user.getLastName())
-                            .email(user.getUsername())
-                            .build());
+            model.addAttribute(MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+            return "account/details";
         }
+    }
 
-        return "account";
+    @RequestMapping("account/details")
+    public String accountDetail(Model model, Principal principal) {
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+        return "account/details";
+    }
+
+    @RequestMapping("account/bikes")
+    public String accountBikes(Model model, Principal principal) {
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+        return "account/bikes";
+    }
+
+    @RequestMapping("account/history")
+    public String accountHistory(Model model, Principal principal) {
+        model.addAttribute(MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+        return "account/history";
+    }
+
+    private CustomerAccountDto getCustomerAccountDto(Principal principal) {
+        SecurityUser user = (SecurityUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+        return CustomerAccountDto.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getUsername())
+                .build();
     }
 
     @PostMapping("account/create")
