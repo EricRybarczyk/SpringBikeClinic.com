@@ -13,14 +13,14 @@ import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.security.Principal;
 
 @Controller
+@RequestMapping("account")
 @RequiredArgsConstructor
 @Slf4j
 public class AccountController {
@@ -28,48 +28,44 @@ public class AccountController {
     private final UserDetailsManager userDetailsManager;
     private final StandAloneAuthenticator standAloneAuthenticator;
 
-    private static final String MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT = "customerAccountDto";
+    private static final String MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT = "customerAccountDto";
 
-    @RequestMapping("account")
+    @InitBinder
+    public void setAllowedFields(WebDataBinder dataBinder) {
+        dataBinder.setAllowedFields("email", "firstName", "lastName", "createPassword", "confirmPassword");
+    }
+
+    @GetMapping("")
     public String account(Model model, Principal principal) {
         if (principal == null) {
             model.addAttribute("createAccountDto", new CreateAccountDto());
             model.addAttribute("loginDto", new LoginDto());
             return "account";
         } else {
-            model.addAttribute(MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+            model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
             return "account/details";
         }
     }
 
-    @RequestMapping("account/details")
+    @GetMapping("/details")
     public String accountDetail(Model model, Principal principal) {
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+        model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
         return "account/details";
     }
 
-    @RequestMapping("account/bikes")
+    @GetMapping("/bikes")
     public String accountBikes(Model model, Principal principal) {
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+        model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
         return "account/bikes";
     }
 
-    @RequestMapping("account/history")
+    @GetMapping("/history")
     public String accountHistory(Model model, Principal principal) {
-        model.addAttribute(MODEL_ATTRIBUTE_NAME_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+        model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
         return "account/history";
     }
 
-    private CustomerAccountDto getCustomerAccountDto(Principal principal) {
-        SecurityUser user = (SecurityUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-        return CustomerAccountDto.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getUsername())
-                .build();
-    }
-
-    @PostMapping("account/create")
+    @PostMapping("/create")
     public String createAccount(final HttpServletRequest request, @ModelAttribute("createAccountDto") @Valid CreateAccountDto createAccountDto, BindingResult bindingResult, Model model) {
         log.debug("POST Request to create an account for username: {}", createAccountDto.getEmail());
 
@@ -99,4 +95,16 @@ public class AccountController {
         return "redirect:/account";
     }
 
+    private CustomerAccountDto getCustomerAccountDto(Principal principal) {
+        SecurityUser user = getSecurityUser(principal);
+        return CustomerAccountDto.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getUsername())
+                .build();
+    }
+
+    private SecurityUser getSecurityUser(Principal principal) {
+        return (SecurityUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
+    }
 }
