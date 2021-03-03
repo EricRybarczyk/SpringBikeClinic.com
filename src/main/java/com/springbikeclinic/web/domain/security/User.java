@@ -5,13 +5,14 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.Singular;
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @Builder
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,6 +22,8 @@ public class User {
     private String password;
     private String firstName;
     private String lastName;
+
+    private final static long serialVersionUID = 1L;
 
     @Singular
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)

@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class SecurityUser implements UserDetails {
 
     private final User user;
+    private final static long serialVersionUID = 1L;
 
     public SecurityUser(User user) {
         this.user = user;
@@ -26,6 +27,10 @@ public class SecurityUser implements UserDetails {
         } else {
             return new HashSet<>();
         }
+    }
+
+    public Long getUserId() {
+        return user.getId();
     }
 
     public String getFirstName() {
@@ -48,22 +53,22 @@ public class SecurityUser implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return user.getAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return user.getAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return user.getCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getEnabled();
     }
 
 }

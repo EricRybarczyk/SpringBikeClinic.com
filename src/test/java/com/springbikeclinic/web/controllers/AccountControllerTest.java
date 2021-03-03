@@ -1,12 +1,15 @@
 package com.springbikeclinic.web.controllers;
 
 import com.springbikeclinic.web.dto.CreateAccountDto;
+import com.springbikeclinic.web.dto.CustomerAccountDto;
 import com.springbikeclinic.web.security.StandAloneAuthenticator;
 import com.springbikeclinic.web.security.WithMockCustomUser;
+import com.springbikeclinic.web.services.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -34,6 +38,7 @@ class AccountControllerTest {
     private static final String EXPECTED_ACCOUNT_HISTORY_NAME = "account/history";
     private static final String POST_CREATE_ACCOUNT_PATH = "/account/create";
     private static final String EXPECTED_CREATE_ACCOUNT_RESULT_VIEW_NAME = "redirect:/account";
+    private static final String POST_UPDATE_ACCOUNT_PATH = "/account/update";
 
     @Autowired
     private MockMvc mockMvc;
@@ -43,6 +48,9 @@ class AccountControllerTest {
 
     @MockBean
     private StandAloneAuthenticator standAloneAuthenticator;
+
+    @MockBean
+    private UserService userService;
 
 
     @Nested
@@ -119,6 +127,44 @@ class AccountControllerTest {
         }
 
     }
+
+
+    @Nested
+    @DisplayName("Update Account")
+    class UpdateAccountTests {
+
+        @WithMockCustomUser
+        @Test
+        void postUpdateAccount_withValidInput_accountDetailsAreUpdated() throws Exception {
+            final CustomerAccountDto customerAccountDto = getCustomerAccountDto();
+            ArgumentCaptor<CustomerAccountDto> argumentCaptor = ArgumentCaptor.forClass(CustomerAccountDto.class);
+
+            mockMvc.perform(post(POST_UPDATE_ACCOUNT_PATH)
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .param("firstName", customerAccountDto.getFirstName())
+                    .param("lastName", customerAccountDto.getLastName())
+                    .param("email", customerAccountDto.getEmail())
+                    .with(csrf()))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name(EXPECTED_ACCOUNT_DETAILS_VIEW_NAME))
+                    .andExpect(model().attributeExists("updateSuccessful"));
+
+            verify(userService, times(1)).updateUser(anyLong(), argumentCaptor.capture());
+            final CustomerAccountDto captorValue = argumentCaptor.getValue();
+            assertThat(captorValue.getFirstName()).isEqualTo(customerAccountDto.getFirstName());
+            assertThat(captorValue.getLastName()).isEqualTo(customerAccountDto.getLastName());
+            assertThat(captorValue.getEmail()).isEqualTo(customerAccountDto.getEmail());
+        }
+
+        private CustomerAccountDto getCustomerAccountDto() {
+            return CustomerAccountDto.builder()
+                    .firstName("Firstname")
+                    .lastName("Lastname")
+                    .email("a@b.com")
+                    .build();
+        }
+    }
+
 
     @Nested
     @DisplayName("Basic GET Requests")

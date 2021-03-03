@@ -6,6 +6,7 @@ import com.springbikeclinic.web.dto.CreateAccountDto;
 import com.springbikeclinic.web.dto.CustomerAccountDto;
 import com.springbikeclinic.web.dto.LoginDto;
 import com.springbikeclinic.web.security.StandAloneAuthenticator;
+import com.springbikeclinic.web.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,7 @@ public class AccountController {
 
     private final UserDetailsManager userDetailsManager;
     private final StandAloneAuthenticator standAloneAuthenticator;
+    private final UserService userService;
 
     private static final String MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT = "customerAccountDto";
 
@@ -93,6 +95,22 @@ public class AccountController {
 
         // redirect so browser is not left on the /account/create transient path
         return "redirect:/account";
+    }
+
+    @PostMapping("/update")
+    public String updateExistingAccount(@ModelAttribute("customerAccountDto") @Valid CustomerAccountDto customerUpdateDto, Principal principal, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(e -> log.debug(e.toString()));
+            return "account/details";
+        }
+
+        // make sure changes are only applied to existing logged-in user
+        final SecurityUser securityUser = getSecurityUser(principal);
+        userService.updateUser(securityUser.getUserId(), customerUpdateDto);
+
+        model.addAttribute("updateSuccessful", Boolean.TRUE);
+
+        return "account/details";
     }
 
     private CustomerAccountDto getCustomerAccountDto(Principal principal) {

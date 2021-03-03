@@ -19,6 +19,7 @@ public class WithMockCustomUserUserSecurityContextFactory implements WithSecurit
         Authority authorityCustomer = Authority.builder().role("CUSTOMER").build();
         String password = "{noop}password";
         User principal = User.builder()
+                .id(1L)
                 .email("user@springbikeclinic.com")
                 .password(password)
                 .firstName("Firsty")
