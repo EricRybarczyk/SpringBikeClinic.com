@@ -1,5 +1,6 @@
 package com.springbikeclinic.web.controllers;
 
+import com.springbikeclinic.web.domain.security.SecurityUser;
 import com.springbikeclinic.web.dto.CreateAccountDto;
 import com.springbikeclinic.web.dto.CustomerAccountDto;
 import com.springbikeclinic.web.security.StandAloneAuthenticator;
@@ -149,7 +150,7 @@ class AccountControllerTest {
                     .andExpect(view().name(EXPECTED_ACCOUNT_DETAILS_VIEW_NAME))
                     .andExpect(model().attributeExists("updateSuccessful"));
 
-            verify(userService, times(1)).updateUser(anyLong(), argumentCaptor.capture());
+            verify(userService, times(1)).updateUser(any(SecurityUser.class), argumentCaptor.capture());
             final CustomerAccountDto captorValue = argumentCaptor.getValue();
             assertThat(captorValue.getFirstName()).isEqualTo(customerAccountDto.getFirstName());
             assertThat(captorValue.getLastName()).isEqualTo(customerAccountDto.getLastName());

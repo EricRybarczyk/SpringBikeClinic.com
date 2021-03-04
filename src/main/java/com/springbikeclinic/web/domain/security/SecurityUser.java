@@ -37,8 +37,16 @@ public class SecurityUser implements UserDetails {
         return user.getFirstName();
     }
 
+    public void setFirstName(String firstName) {
+        user.setFirstName(firstName);
+    }
+
     public String getLastName() {
         return user.getLastName();
+    }
+
+    public void setLastName(String lastName) {
+        user.setLastName(lastName);
     }
 
     @Override

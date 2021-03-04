@@ -106,7 +106,7 @@ public class AccountController {
 
         // make sure changes are only applied to existing logged-in user
         final SecurityUser securityUser = getSecurityUser(principal);
-        userService.updateUser(securityUser.getUserId(), customerUpdateDto);
+        userService.updateUser(securityUser, customerUpdateDto);
 
         model.addAttribute("updateSuccessful", Boolean.TRUE);
 

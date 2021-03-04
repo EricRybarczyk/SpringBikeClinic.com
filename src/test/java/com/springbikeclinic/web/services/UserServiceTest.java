@@ -1,5 +1,6 @@
 package com.springbikeclinic.web.services;
 
+import com.springbikeclinic.web.domain.security.SecurityUser;
 import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.CustomerAccountDto;
 import com.springbikeclinic.web.repositories.security.UserRepository;
@@ -34,12 +35,20 @@ class UserServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
         final CustomerAccountDto customerAccountDto = getCustomerAccountDto();
-        userService.updateUser(1L, customerAccountDto);
+        SecurityUser principal = new SecurityUser(user);
+        userService.updateUser(principal, customerAccountDto);
 
         verify(userRepository, times(1)).save(argumentCaptor.capture());
         final User captorValue = argumentCaptor.getValue();
+
+        // verify values passed to repository
         assertThat(captorValue.getFirstName()).isEqualTo(customerAccountDto.getFirstName());
         assertThat(captorValue.getLastName()).isEqualTo(customerAccountDto.getLastName());
+
+        // verify the Principal was also updated
+        assertThat(principal.getFirstName()).isEqualTo(customerAccountDto.getFirstName());
+        assertThat(principal.getLastName()).isEqualTo(customerAccountDto.getLastName());
+
         // not verifying email because the method under test does not update email
     }
 
@@ -48,7 +57,7 @@ class UserServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatThrownBy( () -> {
-           userService.updateUser(999L, getCustomerAccountDto());
+           userService.updateUser(new SecurityUser(getUser()), getCustomerAccountDto());
         }).isInstanceOf(UserNotFoundException.class);
 
         verifyNoMoreInteractions(userRepository);
