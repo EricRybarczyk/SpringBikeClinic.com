@@ -9,7 +9,6 @@ import com.springbikeclinic.web.security.StandAloneAuthenticator;
 import com.springbikeclinic.web.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -44,26 +43,20 @@ public class AccountController {
             model.addAttribute("loginDto", new LoginDto());
             return "account";
         } else {
-            model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+            model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, CustomerAccountDto.from(principal));
             return "account/details";
         }
     }
 
     @GetMapping("/details")
     public String accountDetail(Model model, Principal principal) {
-        model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+        model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, CustomerAccountDto.from(principal));
         return "account/details";
-    }
-
-    @GetMapping("/bikes")
-    public String accountBikes(Model model, Principal principal) {
-        model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
-        return "account/bikes";
     }
 
     @GetMapping("/history")
     public String accountHistory(Model model, Principal principal) {
-        model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, getCustomerAccountDto(principal));
+        model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, CustomerAccountDto.from(principal));
         return "account/history";
     }
 
@@ -105,7 +98,7 @@ public class AccountController {
         }
 
         // make sure changes are only applied to existing logged-in user
-        final SecurityUser securityUser = getSecurityUser(principal);
+        final SecurityUser securityUser = SecurityUser.from(principal);
         userService.updateUser(securityUser, customerUpdateDto);
 
         model.addAttribute("updateSuccessful", Boolean.TRUE);
@@ -113,16 +106,4 @@ public class AccountController {
         return "account/details";
     }
 
-    private CustomerAccountDto getCustomerAccountDto(Principal principal) {
-        SecurityUser user = getSecurityUser(principal);
-        return CustomerAccountDto.builder()
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getUsername())
-                .build();
-    }
-
-    private SecurityUser getSecurityUser(Principal principal) {
-        return (SecurityUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
-    }
 }

@@ -1,8 +1,10 @@
 package com.springbikeclinic.web.domain.security;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -27,6 +29,10 @@ public class SecurityUser implements UserDetails {
         } else {
             return new HashSet<>();
         }
+    }
+
+    public static SecurityUser from(Principal principal) {
+        return (SecurityUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
     }
 
     public Long getUserId() {
