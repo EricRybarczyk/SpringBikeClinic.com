@@ -1,0 +1,5 @@
+package com.springbikeclinic.web.domain;
+
+public enum BikeType {
+    ROAD, MOUNTAIN, GRAVEL, CYCLOCROSS, DIRT_JUMP, DOWNHILL, TOURING, HYBRID, E_BIKE, RECREATIONAL, CRUISER, BMX, CHILDRENS, OTHER;
+}
