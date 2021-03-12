@@ -7,6 +7,8 @@
 <body>
 
 <!--/*@thymesVar id="customerAccountDto" type="com.springbikeclinic.web.dto.CustomerAccountDto"*/-->
+<!--/*@thymesVar id="bikes" type="java.util.List<com.springbikeclinic.web.dto.BikeDto>"*/-->
+<!--/*@thymesVar id="bikeDto" type="com.springbikeclinic.web.dto.BikeDto"*/-->
 <div class="container main-content" layout:fragment="page-content">
 
     <div class="row">
@@ -26,6 +28,86 @@
                         <p th:text="'Welcome ' + ${customerAccountDto?.firstName}">Welcome</p>
                     </div>
                 </div>
+
+                <!-- TODO: List of Bikes -->
+
+
+                <!-- Add New Bike -->
+                <div class="row pt-3">
+                    <div class="col-md-9">
+                        <form th:object="${bikeDto}" th:action="@{/account/bikes/create/}" method="post">
+
+                            <div class="form-group row">
+                                <label for="description"class="col-sm-3 col-form-label">Description</label>
+                                <div class="col-sm-9">
+                                    <input type="text" th:field="*{description}" name="description" id="description" class="form-control"
+                                           placeholder="Description" required
+                                           th:class="${#fields.hasErrors('description')} ? 'form-control is-invalid' : 'form-control'">
+                                    <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="invalid-feedback">
+                                        error message
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="bikeType" class="col-sm-3 col-form-label">Bike Type</label>
+                                <div class="col-sm-9">
+                                    <select name="bikeType" id="bikeType" class="form-control" th:field="*{bikeType}">
+                                        <option th:value="NOT_SPECIFIED">Bike Type</option>
+                                        <option th:remove="all">Mountain</option>
+                                        <option th:remove="all">Gravel</option>
+                                        <option th:each="bikeType : ${T(com.springbikeclinic.web.domain.BikeType).values()}"
+                                                th:value="${bikeType.name()}"
+                                                th:text="${bikeType.name()}">Other
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="manufacturerName" class="col-sm-3 col-form-label">Manufacturer</label>
+                                <div class="col-sm-9">
+                                    <input type="text" th:field="*{manufacturerName}" name="manufacturerName" id="manufacturerName" class="form-control"
+                                           placeholder="Manufacturer" required
+                                           th:class="${#fields.hasErrors('manufacturerName')} ? 'form-control is-invalid' : 'form-control'">
+                                    <div th:if="${#fields.hasErrors('manufacturerName')}" th:errors="*{manufacturerName}" class="invalid-feedback">
+                                        error message
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="modelName" class="col-sm-3 col-form-label">Model</label>
+                                <div class="col-sm-9">
+                                    <input type="text" th:field="*{modelName}" name="modelName" id="modelName" class="form-control" placeholder="Model" required
+                                           th:class="${#fields.hasErrors('modelName')} ? 'form-control is-invalid' : 'form-control'">
+                                    <div th:if="${#fields.hasErrors('modelName')}" th:errors="*{modelName}" class="invalid-feedback">
+                                        error message
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="modelYear" class="col-sm-3 col-form-label">Year</label>
+                                <div class="col-sm-3">
+                                    <input type="text" th:field="*{modelYear}" name="modelYear" id="modelYear" class="form-control" placeholder="Year"
+                                           th:class="${#fields.hasErrors('modelYear')} ? 'form-control is-invalid' : 'form-control'">
+                                    <div th:if="${#fields.hasErrors('modelYear')}" th:errors="*{modelYear}" class="invalid-feedback">
+                                        error message
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <div class="col-sm-3 offset-sm-3 mt-3">
+                                    <button class="btn btn-site-primary" type="submit">Save Bike</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
 
             </section>
         </div>

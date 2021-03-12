@@ -35,7 +35,6 @@ class AccountControllerTest {
     private static final String GET_ACCOUNT_BASE_PATH = "/account";
     private static final String EXPECTED_ACCOUNT_VIEW_NAME = "account";
     private static final String EXPECTED_ACCOUNT_DETAILS_VIEW_NAME = "account/details";
-    private static final String EXPECTED_ACCOUNT_BIKES_VIEW_NAME = "account/bikes";
     private static final String EXPECTED_ACCOUNT_HISTORY_NAME = "account/history";
     private static final String POST_CREATE_ACCOUNT_PATH = "/account/create";
     private static final String EXPECTED_CREATE_ACCOUNT_RESULT_VIEW_NAME = "redirect:/account";
@@ -192,14 +191,6 @@ class AccountControllerTest {
             mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/details"))
                     .andExpect(status().isOk())
                     .andExpect(view().name(EXPECTED_ACCOUNT_DETAILS_VIEW_NAME));
-        }
-
-        @WithMockCustomUser
-        @Test
-        void getAccountBikes_asAuthenticatedUser_isOk() throws Exception {
-            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/bikes"))
-                    .andExpect(status().isOk())
-                    .andExpect(view().name(EXPECTED_ACCOUNT_BIKES_VIEW_NAME));
         }
 
         @WithMockCustomUser
