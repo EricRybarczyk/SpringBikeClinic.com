@@ -1,6 +1,7 @@
 package com.springbikeclinic.web.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.springbikeclinic.web.domain.security.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,8 +29,8 @@ public class Bike {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
-    private Customer owner;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @JsonIgnore
     @OneToMany(mappedBy = "bike", fetch = FetchType.LAZY)

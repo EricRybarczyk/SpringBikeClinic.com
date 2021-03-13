@@ -14,13 +14,11 @@ public class WorkOrderDto {
     private LocalDateTime createdDateTime;
     private LocalDateTime submittedDateTime;
     private WorkOrderStatus status;
-    private CustomerDto customer;
+
     private BikeDto bike;
-    private MechanicDto mechanic;
     private LocalDate estimatedCompletionDate;
     private LocalDate actualCompletionDate;
     private String customerNotes;
-    private String mechanicNotes;
     private Set<WorkItemDto> workItems;
 }
 

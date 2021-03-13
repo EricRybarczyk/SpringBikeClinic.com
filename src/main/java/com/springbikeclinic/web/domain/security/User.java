@@ -1,11 +1,14 @@
 package com.springbikeclinic.web.domain.security;
 
+import com.springbikeclinic.web.domain.Bike;
+import com.springbikeclinic.web.domain.WorkOrder;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.Singular;
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,6 +25,12 @@ public class User implements Serializable {
     private String password;
     private String firstName;
     private String lastName;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<Bike> bikes = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private Set<WorkOrder> workOrders = new HashSet<>();
 
     private final static long serialVersionUID = 1L;
 
@@ -47,7 +56,9 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(Long id, String email, String password, String firstName, String lastName, Set<Authority> authorities, Boolean accountNonExpired, Boolean accountNonLocked, Boolean credentialsNonExpired, Boolean enabled) {
+    public User(Long id, String email, String password, String firstName, String lastName,
+                Set<Bike> bikes, Set<WorkOrder> workOrders, Set<Authority> authorities,
+                Boolean accountNonExpired, Boolean accountNonLocked, Boolean credentialsNonExpired, Boolean enabled) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -58,10 +69,18 @@ public class User implements Serializable {
         this.accountNonLocked = accountNonLocked;
         this.credentialsNonExpired = credentialsNonExpired;
         this.enabled = enabled;
+
+        if (bikes != null) {
+            this.bikes = bikes;
+        }
+
+        if (workOrders != null) {
+            this.workOrders = workOrders;
+        }
     }
 
     public User(Long id, String email, String password, String firstName, String lastName, Set<Authority> authorities) {
-        this(id, email, password, firstName, lastName, authorities, true, true, true, true);
+        this(id, email, password, firstName, lastName, null, null, authorities, true, true, true, true);
     }
 
 }

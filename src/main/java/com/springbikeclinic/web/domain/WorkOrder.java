@@ -1,5 +1,6 @@
 package com.springbikeclinic.web.domain;
 
+import com.springbikeclinic.web.domain.security.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,16 +29,12 @@ public class WorkOrder {
     private WorkOrderStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bike_id")
     private Bike bike;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mechanic_id")
-    private Mechanic mechanic;
 
     private LocalDate estimatedCompletionDate;
     private LocalDate actualCompletionDate;

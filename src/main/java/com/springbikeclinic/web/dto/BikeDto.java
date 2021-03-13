@@ -22,7 +22,6 @@ public class BikeDto {
     private String description;
 
     private BikeType bikeType;
-    private CustomerDto customer;
 
     @NotNull
     private Integer modelYear;
