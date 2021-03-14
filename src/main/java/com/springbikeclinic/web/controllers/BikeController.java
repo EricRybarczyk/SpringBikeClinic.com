@@ -68,4 +68,13 @@ public class BikeController {
 
         return "account/bikes";
     }
+
+    @GetMapping("/delete/{bikeId}")
+    public String deleteBike(@PathVariable("bikeId") Long bikeId, Principal principal) {
+        final Long userId = SecurityUser.from(principal).getUser().getId();
+
+        bikeService.deleteBikeForUser(bikeId, userId);
+
+        return "redirect:/account/bikes";
+    }
 }

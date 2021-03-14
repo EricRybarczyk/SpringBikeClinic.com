@@ -9,4 +9,6 @@ public interface BikeService {
     BikeDto save(BikeDto bikeDto, Long userId);
     Set<BikeDto> getBikes(Long userId);
     BikeDto getBikeForUser(Long bikeId, Long userId);
+    void deleteBikeForUser(Long bikeId, Long userId);
+
 }

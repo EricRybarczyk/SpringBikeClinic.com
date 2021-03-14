@@ -4,6 +4,7 @@ import com.springbikeclinic.web.TestData;
 import com.springbikeclinic.web.domain.Bike;
 import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.BikeDto;
+import com.springbikeclinic.web.exceptions.NotFoundException;
 import com.springbikeclinic.web.mappers.BikeMapper;
 import com.springbikeclinic.web.repositories.BikeRepository;
 import com.springbikeclinic.web.repositories.security.UserRepository;
@@ -19,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -109,5 +111,28 @@ class BikeServiceTest {
         assertThat(captorValue).isEqualTo(1L);
     }
 
+    @Test
+    void testDeleteBike_validInput() throws Exception {
+        Bike bike = TestData.getBike();
+        when(bikeRepository.findBikeByIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(bike));
+        ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
+
+        bikeService.deleteBikeForUser(bike.getId(), 1L);
+
+        verify(bikeRepository, times(1)).findBikeByIdAndUserId(anyLong(), anyLong());
+
+        verify(bikeRepository, times(1)).deleteById(argumentCaptor.capture());
+        final Long captorValue = argumentCaptor.getValue();
+        assertThat(captorValue).isEqualTo(bike.getId());
+    }
+
+    @Test
+    void testDeleteBike_invalidInput_ThrowsNotFoundException() throws Exception {
+        when(bikeRepository.findBikeByIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(NotFoundException.class, () -> bikeService.deleteBikeForUser(9999L, 1L));
+
+        verify(bikeRepository, times(1)).findBikeByIdAndUserId(anyLong(), anyLong());
+    }
 
 }

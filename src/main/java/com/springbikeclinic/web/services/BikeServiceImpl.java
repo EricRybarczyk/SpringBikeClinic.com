@@ -71,4 +71,12 @@ public class BikeServiceImpl implements BikeService {
         }
     }
 
+    @Override
+    public void deleteBikeForUser(Long bikeId, Long userId) {
+        // get the Bike first to make sure it belongs to the specified user
+        Bike bikeForUser = bikeRepository.findBikeByIdAndUserId(bikeId, userId)
+                .orElseThrow(() -> new NotFoundException("Requested bike was not found"));
+        bikeRepository.deleteById(bikeForUser.getId());
+    }
+
 }

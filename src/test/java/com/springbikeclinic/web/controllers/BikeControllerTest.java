@@ -59,6 +59,7 @@ class BikeControllerTest {
     void getAccountBikes_asAnonymousUser_isForbidden() throws Exception {
         mockMvc.perform(get(GET_BIKES_BASE_PATH))
                 .andExpect(status().isUnauthorized());
+        verifyNoInteractions(bikeService);
     }
 
     @Test
@@ -94,7 +95,6 @@ class BikeControllerTest {
                 .andExpect(view().name("redirect:/account/bikes"));
 
         verify(bikeService, times(1)).save(any(BikeDto.class), anyLong());
-
     }
 
     @WithMockCustomUser
@@ -148,7 +148,6 @@ class BikeControllerTest {
                 .andExpect(view().name(EXPECTED_ACCOUNT_BIKES_VIEW_NAME));
 
         verify(bikeService, times(0)).save(any(BikeDto.class), anyLong());
-
     }
 
     @WithMockCustomUser
@@ -169,6 +168,36 @@ class BikeControllerTest {
                 .andExpect(view().name("errors/error404"));
 
         verify(bikeService, times(1)).save(any(BikeDto.class), anyLong());
+    }
+
+    @WithMockCustomUser
+    @Test
+    void testDeleteBike_withValidInput_resultOk() throws Exception {
+        mockMvc.perform(get(GET_BIKES_BASE_PATH + "/delete/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/account/bikes"));
+
+        verify(bikeService, times(1)).deleteBikeForUser(anyLong(), anyLong());
+    }
+
+    @WithMockCustomUser
+    @Test
+    void testDeleteBike_withInvalidInput_showsError404() throws Exception {
+        doThrow(new NotFoundException("Bike not found")).when(bikeService).deleteBikeForUser(anyLong(), anyLong());
+
+        mockMvc.perform(get(GET_BIKES_BASE_PATH + "/delete/9999"))
+                .andExpect(status().isNotFound())
+                .andExpect(model().attributeExists("errorMessage"))
+                .andExpect(view().name("errors/error404"));
+
+        verify(bikeService, times(1)).deleteBikeForUser(anyLong(), anyLong());
+    }
+
+    @Test
+    void testDeleteBike_asAnonymousUser_resultForbidden() throws Exception {
+        mockMvc.perform(get(GET_BIKES_BASE_PATH + "/delete/1"))
+                .andExpect(status().isUnauthorized());
+        verifyNoInteractions(bikeService);
     }
 
 }
