@@ -77,10 +77,10 @@ class BikeControllerTest {
     void testPostNewBike_withValidInput_bikeIsSaved() throws Exception {
         Bike bike = new Bike();
         bike.setId(1L);
-        when(bikeService.save(any(Bike.class), anyLong())).thenReturn(bike);
+        when(bikeService.save(any(BikeDto.class), anyLong())).thenReturn(bike);
         when(bikeMapper.bikeDtoToBike(any(BikeDto.class))).thenReturn(bike);
 
-        mockMvc.perform(post(GET_BIKES_BASE_PATH + "/create")
+        mockMvc.perform(post(GET_BIKES_BASE_PATH + "/save")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .param("description", "bike")
                 .param("bikeType", "MOUNTAIN")
@@ -91,7 +91,7 @@ class BikeControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/account/bikes"));
 
-        verify(bikeService, times(1)).save(any(Bike.class), anyLong());
+        verify(bikeService, times(1)).save(any(BikeDto.class), anyLong());
 
     }
 
@@ -100,10 +100,10 @@ class BikeControllerTest {
     void testPostNewBike_withInvalidInput_bikeIsNotSaved() throws Exception {
         Bike bike = new Bike();
         bike.setId(1L);
-        when(bikeService.save(any(Bike.class), anyLong())).thenReturn(bike);
+        when(bikeService.save(any(BikeDto.class), anyLong())).thenReturn(bike);
         when(bikeMapper.bikeDtoToBike(any(BikeDto.class))).thenReturn(bike);
 
-        mockMvc.perform(post(GET_BIKES_BASE_PATH + "/create")
+        mockMvc.perform(post(GET_BIKES_BASE_PATH + "/save")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 // values are too short so they are invalid, but all fields are present like the real form post
                 .param("description", "x")
@@ -113,10 +113,14 @@ class BikeControllerTest {
                 .param("modelYear", "0")
                 .with(csrf()))
                 .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrorCode("bikeDto","description","Size"))
+                .andExpect(model().attributeHasFieldErrorCode("bikeDto","manufacturerName","Size"))
+                .andExpect(model().attributeHasFieldErrorCode("bikeDto","modelName","Size"))
+                .andExpect(model().attributeHasFieldErrorCode("bikeDto","modelYear","BikeModelYear"))
                 .andExpect(model().attributeExists("bikeDto"))
                 .andExpect(view().name(EXPECTED_ACCOUNT_BIKES_VIEW_NAME));
 
-        verify(bikeService, times(0)).save(any(Bike.class), anyLong());
+        verify(bikeService, times(0)).save(any(BikeDto.class), anyLong());
 
     }
 

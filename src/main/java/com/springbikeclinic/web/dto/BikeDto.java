@@ -35,4 +35,7 @@ public class BikeDto {
     @Size(min = 3, max = 50, message = "Must be between {min} and {max} characters long")
     private String modelName;
 
+    public boolean isNew() {
+        return id == null;
+    }
 }

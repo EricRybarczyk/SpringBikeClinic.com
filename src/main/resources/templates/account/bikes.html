@@ -6,7 +6,6 @@
 </head>
 <body>
 
-<!--/*@thymesVar id="customerAccountDto" type="com.springbikeclinic.web.dto.CustomerAccountDto"*/-->
 <!--/*@thymesVar id="bikeList" type="java.util.List<com.springbikeclinic.web.dto.BikeDto>"*/-->
 <!--/*@thymesVar id="bikeDto" type="com.springbikeclinic.web.dto.BikeDto"*/-->
 <div class="container main-content" layout:fragment="page-content">
@@ -67,7 +66,8 @@
                     </div>
 
                     <div class="col-md-9">
-                        <form th:object="${bikeDto}" th:action="@{/account/bikes/create/}" method="post">
+                        <form th:object="${bikeDto}" th:action="@{/account/bikes/save/}" method="post">
+                            <input type="hidden" th:field="*{id}"/>
 
                             <div class="form-group row">
                                 <label for="description"class="col-sm-3 col-form-label">Description</label>
