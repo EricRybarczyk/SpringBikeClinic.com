@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Not Found :: Spring Bike Clinic</title>
+</head>
+<body>
+<div class="container main-content" layout:fragment="page-content">
+
+    <h1 class="text-center">404: Not Found</h1>
+
+    <!--/*@thymesVar id="errorMessage" type="java.lang.String"*/-->
+
+    <h3 class="text-center" th:text="${errorMessage}"></h3>
+
+
+
+</div>
+</body>
+</html>

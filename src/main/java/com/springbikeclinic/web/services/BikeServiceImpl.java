@@ -3,6 +3,7 @@ package com.springbikeclinic.web.services;
 import com.springbikeclinic.web.domain.Bike;
 import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.BikeDto;
+import com.springbikeclinic.web.exceptions.NotFoundException;
 import com.springbikeclinic.web.mappers.BikeMapper;
 import com.springbikeclinic.web.repositories.BikeRepository;
 import com.springbikeclinic.web.repositories.security.UserRepository;
@@ -36,12 +37,15 @@ public class BikeServiceImpl implements BikeService {
 
     @Override
     public BikeDto getBikeForUser(Long bikeId, Long userId) {
-        return bikeMapper.bikeToBikeDto(bikeRepository.findBikeByIdAndUserId(bikeId, userId).orElseThrow()); // TODO: ControllerAdvice and NotFoundException
+        return bikeMapper.bikeToBikeDto(
+                bikeRepository.findBikeByIdAndUserId(bikeId, userId)
+                        .orElseThrow(() -> new NotFoundException("Requested bike was not found")));
     }
 
     @Override
     public BikeDto save(BikeDto bikeDto, Long userId) {
-        final User user = userRepository.findById(userId).orElseThrow(); // TODO: ControllerAdvice and NotFoundException
+        final User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User account was not found"));
 
         if (bikeDto.isNew()) {
             log.debug("-------> Save new bike for user");
@@ -51,7 +55,8 @@ public class BikeServiceImpl implements BikeService {
             return bikeMapper.bikeToBikeDto(bikeRepository.save(bike));
 
         } else {
-            Bike bike = bikeRepository.findBikeByIdAndUserId(bikeDto.getId(), userId).orElseThrow(); // TODO: ControllerAdvice and NotFoundException
+            Bike bike = bikeRepository.findBikeByIdAndUserId(bikeDto.getId(), userId)
+                    .orElseThrow(() -> new NotFoundException("Requested bike was not found"));
             log.debug("-------> Update existing bike for user");
 
             // existing bike already related to User so we only need to update field values, no change to User-Bike relationships

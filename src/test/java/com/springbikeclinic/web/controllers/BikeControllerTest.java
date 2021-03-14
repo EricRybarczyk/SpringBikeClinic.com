@@ -3,6 +3,7 @@ package com.springbikeclinic.web.controllers;
 import com.springbikeclinic.web.TestData;
 import com.springbikeclinic.web.domain.Bike;
 import com.springbikeclinic.web.dto.BikeDto;
+import com.springbikeclinic.web.exceptions.NotFoundException;
 import com.springbikeclinic.web.mappers.BikeMapper;
 import com.springbikeclinic.web.security.WithMockCustomUser;
 import com.springbikeclinic.web.services.BikeService;
@@ -98,6 +99,31 @@ class BikeControllerTest {
 
     @WithMockCustomUser
     @Test
+    void testPostExistingBikeForUpdate_withValidInput_bikeIsSaved() throws Exception {
+        // Note: from Controller perspective the only difference in this test is the addition of the "id" parameter to the POST
+
+        Bike bike = new Bike();
+        bike.setId(1L);
+        when(bikeService.save(any(BikeDto.class), anyLong())).thenReturn(TestData.getExistingBikeDto());
+        when(bikeMapper.bikeDtoToBike(any(BikeDto.class))).thenReturn(bike);
+
+        mockMvc.perform(post(GET_BIKES_BASE_PATH + "/save")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", "1")
+                .param("description", "bike")
+                .param("bikeType", "MOUNTAIN")
+                .param("manufacturerName", "Manufacturer")
+                .param("modelName", "Model")
+                .param("modelYear", "2020")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/account/bikes"));
+
+        verify(bikeService, times(1)).save(any(BikeDto.class), anyLong());
+    }
+
+    @WithMockCustomUser
+    @Test
     void testPostNewBike_withInvalidInput_bikeIsNotSaved() throws Exception {
         Bike bike = new Bike();
         bike.setId(1L);
@@ -123,6 +149,26 @@ class BikeControllerTest {
 
         verify(bikeService, times(0)).save(any(BikeDto.class), anyLong());
 
+    }
+
+    @WithMockCustomUser
+    @Test
+    void testPostEditBike_withInvalidBikeId_showsError404() throws Exception {
+        when(bikeService.save(any(BikeDto.class), anyLong())).thenThrow(new NotFoundException("Bike not found"));
+
+        mockMvc.perform(post(GET_BIKES_BASE_PATH + "/save")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("description", "bike")
+                .param("bikeType", "MOUNTAIN")
+                .param("manufacturerName", "Manufacturer")
+                .param("modelName", "Model")
+                .param("modelYear", "2020")
+                .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(model().attributeExists("errorMessage"))
+                .andExpect(view().name("errors/error404"));
+
+        verify(bikeService, times(1)).save(any(BikeDto.class), anyLong());
     }
 
 }
