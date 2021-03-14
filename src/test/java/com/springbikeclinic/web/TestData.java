@@ -1,6 +1,9 @@
 package com.springbikeclinic.web;
 
+import com.springbikeclinic.web.domain.Bike;
+import com.springbikeclinic.web.domain.BikeType;
 import com.springbikeclinic.web.domain.WorkType;
+import com.springbikeclinic.web.dto.BikeDto;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,5 +30,39 @@ public class TestData {
         workType.setSortPriority(0);
         workType.setPrice(BigDecimal.valueOf(9.99));
         return workType;
+    }
+
+
+
+    public static Bike getBike() {
+        Bike bike = new Bike();
+        bike.setId(1L);
+        bike.setBikeType(BikeType.MOUNTAIN);
+        bike.setDescription("description");
+        bike.setManufacturerName("manufacturer");
+        bike.setModelName("model");
+        bike.setModelYear(2020);
+        return bike;
+    }
+
+    public static BikeDto getNewBikeDto() {
+        return BikeDto.builder()
+                .bikeType(BikeType.MOUNTAIN)
+                .description("bike")
+                .manufacturerName("manufacturer")
+                .modelName("model")
+                .modelYear(2020)
+                .build();
+    }
+
+    public static BikeDto getExistingBikeDto() {
+        return BikeDto.builder()
+                .id(1L)
+                .bikeType(BikeType.MOUNTAIN)
+                .description("bike")
+                .manufacturerName("manufacturer")
+                .modelName("model")
+                .modelYear(2020)
+                .build();
     }
 }

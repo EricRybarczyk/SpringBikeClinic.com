@@ -1,7 +1,7 @@
 package com.springbikeclinic.web.services;
 
+import com.springbikeclinic.web.TestData;
 import com.springbikeclinic.web.domain.Bike;
-import com.springbikeclinic.web.domain.BikeType;
 import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.BikeDto;
 import com.springbikeclinic.web.mappers.BikeMapper;
@@ -41,33 +41,33 @@ class BikeServiceTest {
 
     @Test
     void testSaveNewBike_bikeIsSavedAndReturned() throws Exception {
-        Bike bike = getBike();
+        Bike bike = TestData.getBike();
         when(bikeRepository.save(any(Bike.class))).thenReturn(bike);
 
-        BikeDto bikeDto = getNewBikeDto();
+        BikeDto bikeDto = TestData.getNewBikeDto();
         when(bikeMapper.bikeDtoToBike(any(BikeDto.class))).thenReturn(bike);
+        when(bikeMapper.bikeToBikeDto(any(Bike.class))).thenReturn(bikeDto);
 
         User user = new User();
         user.setId(1L);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
 
-        final Bike result = bikeService.save(bikeDto, user.getId());
+        final BikeDto result = bikeService.save(bikeDto, user.getId());
 
         assertThat(result).isNotNull();
-        assertThat(result.getId()).isEqualTo(bike.getId());
 
         verify(userRepository, times(1)).findById(argumentCaptor.capture());
         final Long captorValue = argumentCaptor.getValue();
         assertThat(captorValue).isEqualTo(user.getId());
 
-        verify(bikeMapper, times(1)).bikeDtoToBike(any(BikeDto.class));
         verify(bikeRepository, times(1)).save(any(Bike.class));
+        verify(bikeMapper, times(1)).bikeToBikeDto(any(Bike.class));
     }
 
     @Test
     void testUpdateExistingBike_bikeIsSavedAndReturned() throws Exception {
-        Bike bike = getBike();
+        Bike bike = TestData.getBike();
         when(bikeRepository.save(any(Bike.class))).thenReturn(bike);
         when(bikeRepository.findBikeByIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(bike));
 
@@ -76,9 +76,10 @@ class BikeServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
 
-        BikeDto bikeDto = getExistingBikeDto();
+        BikeDto bikeDto = TestData.getExistingBikeDto();
+        when(bikeMapper.bikeToBikeDto(any(Bike.class))).thenReturn(bikeDto);
 
-        final Bike result = bikeService.save(bikeDto, user.getId());
+        final BikeDto result = bikeService.save(bikeDto, user.getId());
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(bike.getId());
 
@@ -87,7 +88,7 @@ class BikeServiceTest {
         assertThat(captorValue).isEqualTo(user.getId());
 
         verify(bikeRepository, times(1)).save(any(Bike.class));
-        verifyNoInteractions(bikeMapper);
+        verify(bikeMapper, times(1)).bikeToBikeDto(any(Bike.class));
     }
 
     @Test
@@ -99,45 +100,13 @@ class BikeServiceTest {
         when(bikeRepository.findAllByUserId(anyLong(), any(Sort.class))).thenReturn(bikeSet);
         ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
 
-        final Set<Bike> bikes = bikeService.getBikes(1L);
+        final Set<BikeDto> bikes = bikeService.getBikes(1L);
         assertThat(bikes).isNotNull();
         assertThat(bikes.size()).isEqualTo(1);
 
         verify(bikeRepository, times(1)).findAllByUserId(argumentCaptor.capture(), any(Sort.class));
         final Long captorValue = argumentCaptor.getValue();
         assertThat(captorValue).isEqualTo(1L);
-    }
-
-    private Bike getBike() {
-        Bike bike = new Bike();
-        bike.setId(1L);
-        bike.setBikeType(BikeType.MOUNTAIN);
-        bike.setDescription("description");
-        bike.setManufacturerName("manufacturer");
-        bike.setModelName("model");
-        bike.setModelYear(2020);
-        return bike;
-    }
-
-    private BikeDto getNewBikeDto() {
-        return BikeDto.builder()
-                .bikeType(BikeType.MOUNTAIN)
-                .description("bike")
-                .manufacturerName("manufacturer")
-                .modelName("model")
-                .modelYear(2020)
-                .build();
-    }
-
-    private BikeDto getExistingBikeDto() {
-        return BikeDto.builder()
-                .id(1L)
-                .bikeType(BikeType.MOUNTAIN)
-                .description("bike")
-                .manufacturerName("manufacturer")
-                .modelName("model")
-                .modelYear(2020)
-                .build();
     }
 
 

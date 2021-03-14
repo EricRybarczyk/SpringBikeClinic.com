@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,22 +23,24 @@ public class BikeServiceImpl implements BikeService {
     private final UserRepository userRepository;
 
     @Override
-    public Set<Bike> getBikes(Long userId) {
+    public Set<BikeDto> getBikes(Long userId) {
         final Set<Bike> bikes = bikeRepository.findAllByUserId(userId, Sort.by(Sort.Order.asc("id")));
 
         log.debug("-------> Found {} bikes for user ID {}", bikes.size(), userId);
         bikes.forEach(b -> log.debug("-------> Bike ID: {}", b.getId()));
 
-        return bikes;
+        return bikes.stream()
+                .map(bikeMapper::bikeToBikeDto)
+                .collect(Collectors.toSet());
     }
 
     @Override
-    public Bike getBikeForUser(Long bikeId, Long userId) {
-        return bikeRepository.findBikeByIdAndUserId(bikeId, userId).orElseThrow(); // TODO: ControllerAdvice and NotFoundException
+    public BikeDto getBikeForUser(Long bikeId, Long userId) {
+        return bikeMapper.bikeToBikeDto(bikeRepository.findBikeByIdAndUserId(bikeId, userId).orElseThrow()); // TODO: ControllerAdvice and NotFoundException
     }
 
     @Override
-    public Bike save(BikeDto bikeDto, Long userId) {
+    public BikeDto save(BikeDto bikeDto, Long userId) {
         final User user = userRepository.findById(userId).orElseThrow(); // TODO: ControllerAdvice and NotFoundException
 
         if (bikeDto.isNew()) {
@@ -45,7 +48,7 @@ public class BikeServiceImpl implements BikeService {
             final Bike bike = bikeMapper.bikeDtoToBike(bikeDto);
             user.getBikes().add(bike);
             bike.setUser(user);
-            return bikeRepository.save(bike);
+            return bikeMapper.bikeToBikeDto(bikeRepository.save(bike));
 
         } else {
             Bike bike = bikeRepository.findBikeByIdAndUserId(bikeDto.getId(), userId).orElseThrow(); // TODO: ControllerAdvice and NotFoundException
@@ -59,7 +62,7 @@ public class BikeServiceImpl implements BikeService {
             bike.setModelName(bikeDto.getModelName());
             bike.setModelYear(bikeDto.getModelYear());
 
-            return bikeRepository.save(bike);
+            return bikeMapper.bikeToBikeDto(bikeRepository.save(bike));
         }
     }
 

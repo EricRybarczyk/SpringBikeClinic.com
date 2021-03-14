@@ -1,9 +1,7 @@
 package com.springbikeclinic.web.controllers;
 
-import com.springbikeclinic.web.domain.Bike;
 import com.springbikeclinic.web.domain.security.SecurityUser;
 import com.springbikeclinic.web.dto.BikeDto;
-import com.springbikeclinic.web.mappers.BikeMapper;
 import com.springbikeclinic.web.services.BikeService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Controller
@@ -27,7 +25,6 @@ public class BikeController {
     private static final String MODEL_ATTRIBUTE_BIKE_DTO = "bikeDto";
 
     private final BikeService bikeService;
-    private final BikeMapper bikeMapper;
 
     @GetMapping
     public String accountBikes(Model model, Principal principal) {
@@ -41,10 +38,7 @@ public class BikeController {
     }
 
     private List<BikeDto> getBikesForUser(Long userId) {
-        return bikeService.getBikes(userId)
-                .stream()
-                .map(bikeMapper::bikeToBikeDto)
-                .collect(Collectors.toList());
+        return new ArrayList<>(bikeService.getBikes(userId));
     }
 
     @PostMapping("/save")
@@ -65,9 +59,9 @@ public class BikeController {
     public String editBike(@PathVariable("bikeId") Long bikeId, Model model, Principal principal) {
         // get the BikeDto - make sure it belongs to the current user
         final Long userId = SecurityUser.from(principal).getUser().getId();
-        final Bike bikeForUser = bikeService.getBikeForUser(bikeId, userId);
+        final BikeDto bikeDto = bikeService.getBikeForUser(bikeId, userId);
 
-        model.addAttribute(MODEL_ATTRIBUTE_BIKE_DTO, bikeMapper.bikeToBikeDto(bikeForUser));
+        model.addAttribute(MODEL_ATTRIBUTE_BIKE_DTO, bikeDto);
 
         List<BikeDto> bikes = getBikesForUser(userId);
         model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, bikes);

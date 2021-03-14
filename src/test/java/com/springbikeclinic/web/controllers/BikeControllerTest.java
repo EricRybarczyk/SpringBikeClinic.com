@@ -1,5 +1,6 @@
 package com.springbikeclinic.web.controllers;
 
+import com.springbikeclinic.web.TestData;
 import com.springbikeclinic.web.domain.Bike;
 import com.springbikeclinic.web.dto.BikeDto;
 import com.springbikeclinic.web.mappers.BikeMapper;
@@ -77,7 +78,7 @@ class BikeControllerTest {
     void testPostNewBike_withValidInput_bikeIsSaved() throws Exception {
         Bike bike = new Bike();
         bike.setId(1L);
-        when(bikeService.save(any(BikeDto.class), anyLong())).thenReturn(bike);
+        when(bikeService.save(any(BikeDto.class), anyLong())).thenReturn(TestData.getExistingBikeDto());
         when(bikeMapper.bikeDtoToBike(any(BikeDto.class))).thenReturn(bike);
 
         mockMvc.perform(post(GET_BIKES_BASE_PATH + "/save")
@@ -100,7 +101,7 @@ class BikeControllerTest {
     void testPostNewBike_withInvalidInput_bikeIsNotSaved() throws Exception {
         Bike bike = new Bike();
         bike.setId(1L);
-        when(bikeService.save(any(BikeDto.class), anyLong())).thenReturn(bike);
+        when(bikeService.save(any(BikeDto.class), anyLong())).thenReturn(TestData.getExistingBikeDto());
         when(bikeMapper.bikeDtoToBike(any(BikeDto.class))).thenReturn(bike);
 
         mockMvc.perform(post(GET_BIKES_BASE_PATH + "/save")
