@@ -6,9 +6,6 @@
 </head>
 <body>
 <section class="pt-3 pr-3" sec:authorize="isAuthenticated()" th:fragment="accountSecondaryNav (activeItem)">
-    <a href="#" th:href="${activeItem == 'details' ? '#' : '/account/details'}"
-       th:class="${activeItem == 'details' ? 'btn btn-site-secondary btn-block my-3' : 'btn btn-site-outline-secondary btn-block my-3'}"
-       class="btn btn-site-outline-secondary btn-block my-3">Account Details</a>
 
     <a href="#" th:href="${activeItem == 'bikes' ? '#' : '/account/bikes'}"
        th:class="${activeItem == 'bikes' ? 'btn btn-site-secondary btn-block my-3' : 'btn btn-site-outline-secondary btn-block my-3'}"
@@ -17,6 +14,10 @@
     <a href="#" th:href="${activeItem == 'history' ? '#' : '/account/history'}"
        th:class="${activeItem == 'history' ? 'btn btn-site-secondary btn-block my-3' : 'btn btn-site-outline-secondary btn-block my-3'}"
        class="btn btn-site-outline-secondary btn-block my-3">Service History</a>
+
+    <a href="#" th:href="${activeItem == 'details' ? '#' : '/account/details'}"
+       th:class="${activeItem == 'details' ? 'btn btn-site-secondary btn-block my-3' : 'btn btn-site-outline-secondary btn-block my-3'}"
+       class="btn btn-site-outline-secondary btn-block my-3">Account Details</a>
 
     <a href="#" th:href="@{/logout}" class="btn btn-site-outline-secondary btn-block my-3">Log Out</a>
 </section>

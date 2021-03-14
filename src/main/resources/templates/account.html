@@ -24,7 +24,9 @@
         <div class="col-md-3">
             <h1 class="ml-1">My Account</h1>
             <section class="sidebar-section" sec:authorize="!isAuthenticated()">
-                Lorem Ipsum... why do I need an account, yadda yadda yadda
+                <p class="mb-3">Log in to access your service history or schedule a new bike service appointment.</p>
+
+                <p>Don't have an account? Create one now and join the crew!</p>
             </section>
             <section th:replace="fragments/account/accountSecondaryNav :: accountSecondaryNav ('details')"></section>
         </div>
