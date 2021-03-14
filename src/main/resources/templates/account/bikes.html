@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout/layout}">
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
 <head>
     <meta charset="UTF-8">
     <title>My Bikes :: Spring Bike Clinic</title>
@@ -7,7 +7,7 @@
 <body>
 
 <!--/*@thymesVar id="customerAccountDto" type="com.springbikeclinic.web.dto.CustomerAccountDto"*/-->
-<!--/*@thymesVar id="bikes" type="java.util.List<com.springbikeclinic.web.dto.BikeDto>"*/-->
+<!--/*@thymesVar id="bikeList" type="java.util.List<com.springbikeclinic.web.dto.BikeDto>"*/-->
 <!--/*@thymesVar id="bikeDto" type="com.springbikeclinic.web.dto.BikeDto"*/-->
 <div class="container main-content" layout:fragment="page-content">
 
@@ -23,17 +23,49 @@
         <div class="col-md-9">
             <section class="pt-3">
 
-                <div class="row pt-3" sec:authorize="isAuthenticated()">
-                    <div class="col-md-12">
-                        <p th:text="'Welcome ' + ${customerAccountDto?.firstName}">Welcome</p>
+                <div class="row pt-3">
+                    <div class="col-md-12 mb-3">
+                        <h3>Saved Bikes</h3>
                     </div>
                 </div>
 
-                <!-- TODO: List of Bikes -->
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Type</th>
+                        <th scope="col">Manufacturer</th>
+                        <th scope="col">Model</th>
+                        <th scope="col">Description</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${bikeList == null || bikeList.size() == 0}">
+                        <td colspan="5" class="text-center">You have no bikes saved in your account</td>
+                    </tr>
+                    <tr th:each="bike : ${bikeList}">
+                        <td th:text="${bike.bikeType.description}">TYPE</td>
+                        <td th:text="${bike.manufacturerName}">Manufacturer</td>
+                        <td th:text="${bike.modelName}">Model</td>
+                        <td th:text="${bike.description}">Description</td>
+                        <td>
+                            <div class="row justify-content-center">
+                                <a class="btn btn-secondary btn-sm mr-3" th:href="@{'/account/bikes/edit/' + ${bike.id}}">edit</a>
+                                <a class="btn btn-secondary btn-sm" th:href="@{'/account/bikes/delete/' + ${bike.id}}">delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
 
                 <!-- Add New Bike -->
-                <div class="row pt-3">
+                <div class="row pt-3 mt-4">
+
+                    <div class="col-md-9 my-3">
+                        <h3>Add a bike to your account:</h3>
+                    </div>
+
                     <div class="col-md-9">
                         <form th:object="${bikeDto}" th:action="@{/account/bikes/create/}" method="post">
 
@@ -53,12 +85,12 @@
                                 <label for="bikeType" class="col-sm-3 col-form-label">Bike Type</label>
                                 <div class="col-sm-9">
                                     <select name="bikeType" id="bikeType" class="form-control" th:field="*{bikeType}">
-                                        <option th:value="NOT_SPECIFIED">Bike Type</option>
+                                        <option th:value="OTHER">Bike Type</option>
                                         <option th:remove="all">Mountain</option>
                                         <option th:remove="all">Gravel</option>
                                         <option th:each="bikeType : ${T(com.springbikeclinic.web.domain.BikeType).values()}"
                                                 th:value="${bikeType.name()}"
-                                                th:text="${bikeType.name()}">Other
+                                                th:text="${bikeType.description}">Other
                                         </option>
                                     </select>
                                 </div>

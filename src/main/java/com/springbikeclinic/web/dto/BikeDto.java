@@ -1,6 +1,7 @@
 package com.springbikeclinic.web.dto;
 
 import com.springbikeclinic.web.domain.BikeType;
+import com.springbikeclinic.web.dto.validation.BikeModelYear;
 import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -13,7 +14,6 @@ import javax.validation.constraints.Size;
 @Builder
 public class BikeDto {
 
-    @NotNull
     private Long id;
 
     @NotNull
@@ -24,6 +24,7 @@ public class BikeDto {
     private BikeType bikeType;
 
     @NotNull
+    @BikeModelYear(message = "Must be a valid Bike Model Year")
     private Integer modelYear;
 
     @NotNull

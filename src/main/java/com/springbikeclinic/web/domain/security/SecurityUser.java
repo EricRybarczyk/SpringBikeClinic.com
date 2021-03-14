@@ -35,6 +35,10 @@ public class SecurityUser implements UserDetails {
         return (SecurityUser) ((UsernamePasswordAuthenticationToken) principal).getPrincipal();
     }
 
+    public User getUser() {
+        return user;
+    }
+
     public Long getUserId() {
         return user.getId();
     }
