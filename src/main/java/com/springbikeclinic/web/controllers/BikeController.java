@@ -11,8 +11,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -38,7 +39,10 @@ public class BikeController {
     }
 
     private List<BikeDto> getBikesForUser(Long userId) {
-        return new ArrayList<>(bikeService.getBikes(userId));
+        return bikeService.getBikes(userId)
+                .stream()
+                .sorted(Comparator.comparingLong(BikeDto::getId))
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/save")
