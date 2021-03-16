@@ -9,9 +9,8 @@ import com.springbikeclinic.web.repositories.BikeRepository;
 import com.springbikeclinic.web.repositories.security.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,15 +23,15 @@ public class BikeServiceImpl implements BikeService {
     private final UserRepository userRepository;
 
     @Override
-    public Set<BikeDto> getBikes(Long userId) {
-        final Set<Bike> bikes = bikeRepository.findAllByUserId(userId, Sort.by(Sort.Order.asc("id")));
+    public List<BikeDto> getBikes(Long userId) {
+        final List<Bike> bikes = bikeRepository.findAllByUserId(userId);
 
         log.debug("-------> Found {} bikes for user ID {}", bikes.size(), userId);
         bikes.forEach(b -> log.debug("-------> Bike ID: {}", b.getId()));
 
         return bikes.stream()
                 .map(bikeMapper::bikeToBikeDto)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     @Override
