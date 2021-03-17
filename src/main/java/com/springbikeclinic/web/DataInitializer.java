@@ -75,7 +75,7 @@ public class DataInitializer implements CommandLineRunner {
 
         WorkTypeDto workTypeTuneUp = WorkTypeDto.builder()
                 .name("Tune Up")
-                .description("Our best seller, the Tune Up will keep your wheels turning all season long. Includes derailleur adjustments, drive train cleaning, and basic brake tuning.")
+                .description("Our best seller, the Tune Up will keep your wheels turning all season long. Includes derailleur adjustments, drive train cleaning, brake service, and a 17-point inspection. Replacement parts not included.")
                 .price(BigDecimal.valueOf(99.95))
                 .sortPriority(1)
                 .build();
@@ -83,7 +83,7 @@ public class DataInitializer implements CommandLineRunner {
 
         WorkTypeDto workTypeDerailleur = WorkTypeDto.builder()
                 .name("Derailleur Adjustment")
-                .description("Front or rear derailleur tuning. We'll get your shift together!")
+                .description("Front or rear derailleur tuning. We'll get your shift together! Replacement parts not included.")
                 .price(BigDecimal.valueOf(19.95))
                 .sortPriority(2)
                 .build();
@@ -99,7 +99,7 @@ public class DataInitializer implements CommandLineRunner {
 
         WorkTypeDto workTypeTrueWheel = WorkTypeDto.builder()
                 .name("True a Wheel")
-                .description("Feeling a bit wobbly? Truing a wheel restores the straight path in front of your bike.")
+                .description("Feeling a bit wobbly? Truing a wheel restores the straight path in front of your bike. Replacement parts not included.")
                 .price(BigDecimal.valueOf(39.95))
                 .sortPriority(4)
                 .build();
@@ -107,7 +107,7 @@ public class DataInitializer implements CommandLineRunner {
 
         WorkTypeDto workTypeSuspension = WorkTypeDto.builder()
                 .name("Suspension Service")
-                .description("Keep the plush feeling as you hit the big drops by maintaining this critical component. Front fork or rear shock service available.")
+                .description("Keep the plush feeling as you hit the big drops by maintaining this critical component. Front fork or rear shock service available. Replacement parts not included.")
                 .price(BigDecimal.valueOf(89.95))
                 .sortPriority(5)
                 .build();
