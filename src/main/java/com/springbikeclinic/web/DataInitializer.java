@@ -122,8 +122,8 @@ public class DataInitializer implements CommandLineRunner {
         workTypeRepository.save(workTypeMapper.workTypeDtoToWorkType(workTypeBrakeBleed));
 
         WorkTypeDto workTypeBrakeService = WorkTypeDto.builder()
-                .name("Break Service")
-                .description("Caliper alignment, sticky pistons, worn pads or cables... We'll make sure you can stop when you need to. Replacement parts not inclded.")
+                .name("Brake Service")
+                .description("Caliper alignment, sticky pistons, worn pads or cables... We'll make sure you can stop when you need to. Replacement parts not included.")
                 .price(BigDecimal.valueOf(39.95))
                 .sortPriority(7)
                 .build();

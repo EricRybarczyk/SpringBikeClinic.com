@@ -6,13 +6,26 @@
 </head>
 <body>
 
-<div class="row service-type-container" th:fragment="serviceType (workType)">
+<!--/*@thymesVar id="workType" type="com.springbikeclinic.web.domain.WorkType"*/-->
+<div class="row service-type-container mb-3" th:fragment="serviceType (workType)">
     <div class="col-md-1 text-right"><span class="lni lni-32 lni-cog service-type-icon"></span></div>
     <div class="col-md-9">
-        <!--/*@thymesVar id="workType" type="com.springbikeclinic.web.domain.WorkType"*/-->
-        <h3 th:text="${workType.name}">Service Type Name</h3>
-        <p th:text="${workType.description}">Description of the service, what it includes, why it is good, whatever else we can say to fill in some space and make this look good.</p>
-        <a class="action-link float-right" th:href="@{'/services/schedule/' + ${workType.id}}">schedule <span class="lni lni-16 lni-arrow-right-circle service-btn-link"></span></a>
+        <div class="row">
+            <div class="col">
+                <h3 th:text="${workType.name}">Service Type Name</h3>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <span th:text="${workType.description}">Description of the service, what it includes, why it is good, whatever else we can say to fill in some space and make this look good.</span>
+            </div>
+        </div>
+        <div class="row justify-content-end mb-4">
+            <div class="col-4 text-right">
+                <span class="font-italic" th:text="${'$' + workType.price}"></span>
+                <a class="action-link ml-3" th:href="@{'/services/schedule/' + ${workType.id}}">schedule <span class="lni lni-16 lni-arrow-right-circle service-btn-link"></span></a>
+            </div>
+        </div>
     </div>
 </div>
 
