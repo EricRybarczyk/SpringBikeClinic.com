@@ -11,9 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Controller
@@ -30,19 +28,12 @@ public class BikeController {
     @GetMapping
     public String accountBikes(Model model, Principal principal) {
         final Long userId = SecurityUser.from(principal).getUser().getId();
-        List<BikeDto> bikes = getBikesForUser(userId);
+        List<BikeDto> bikes = bikeService.getBikes(userId);
 
         model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, bikes);
         model.addAttribute(MODEL_ATTRIBUTE_BIKE_DTO, new BikeDto());
 
         return "account/bikes";
-    }
-
-    private List<BikeDto> getBikesForUser(Long userId) {
-        return bikeService.getBikes(userId)
-                .stream()
-                .sorted(Comparator.comparingLong(BikeDto::getId))
-                .collect(Collectors.toList());
     }
 
     @PostMapping("/save")
@@ -67,7 +58,7 @@ public class BikeController {
 
         model.addAttribute(MODEL_ATTRIBUTE_BIKE_DTO, bikeDto);
 
-        List<BikeDto> bikes = getBikesForUser(userId);
+        List<BikeDto> bikes = bikeService.getBikes(userId);
         model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, bikes);
 
         return "account/bikes";

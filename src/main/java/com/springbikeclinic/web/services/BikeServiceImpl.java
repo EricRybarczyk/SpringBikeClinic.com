@@ -10,6 +10,7 @@ import com.springbikeclinic.web.repositories.security.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,7 @@ public class BikeServiceImpl implements BikeService {
 
         return bikes.stream()
                 .map(bikeMapper::bikeToBikeDto)
+                .sorted(Comparator.comparingLong(BikeDto::getId))
                 .collect(Collectors.toList());
     }
 
