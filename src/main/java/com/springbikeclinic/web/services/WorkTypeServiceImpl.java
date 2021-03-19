@@ -3,11 +3,13 @@ package com.springbikeclinic.web.services;
 import com.springbikeclinic.web.domain.WorkType;
 import com.springbikeclinic.web.exceptions.NotFoundException;
 import com.springbikeclinic.web.repositories.WorkTypeRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Cacheable("workTypes")
 public class WorkTypeServiceImpl implements WorkTypeService {
 
     private final WorkTypeRepository workTypeRepository;
