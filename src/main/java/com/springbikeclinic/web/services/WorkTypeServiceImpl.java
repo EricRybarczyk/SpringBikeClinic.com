@@ -1,6 +1,7 @@
 package com.springbikeclinic.web.services;
 
 import com.springbikeclinic.web.domain.WorkType;
+import com.springbikeclinic.web.exceptions.NotFoundException;
 import com.springbikeclinic.web.repositories.WorkTypeRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class WorkTypeServiceImpl implements WorkTypeService {
 
     @Override
     public WorkType getWorkType(Long id) {
-        return workTypeRepository.findById(id).orElseThrow();
+        return workTypeRepository.findById(id).orElseThrow(() -> new NotFoundException("Requested Service was not found"));
     }
 
     @Override

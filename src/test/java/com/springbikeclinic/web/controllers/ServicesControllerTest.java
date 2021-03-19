@@ -2,6 +2,8 @@ package com.springbikeclinic.web.controllers;
 
 import com.springbikeclinic.web.TestData;
 import com.springbikeclinic.web.domain.WorkType;
+import com.springbikeclinic.web.security.WithMockCustomUser;
+import com.springbikeclinic.web.services.BikeService;
 import com.springbikeclinic.web.services.WorkTypeServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ class ServicesControllerTest {
     private WorkTypeServiceImpl workTypeService;
 
     @MockBean
+    private BikeService bikeService;
+
+    @MockBean
     private AuthenticationManager authenticationManager;
 
     @WithMockUser("authenticatedUser")
@@ -59,7 +64,7 @@ class ServicesControllerTest {
                 .andExpect(view().name(EXPECTED_GET_SERVICES_VIEW_NAME));
     }
 
-    @WithMockUser("authenticatedUser")
+    @WithMockCustomUser
     @Test
     void beginScheduleService_asAuthenticatedUser_IsOk() throws Exception {
         final WorkType workType = TestData.getSingleWorkType();

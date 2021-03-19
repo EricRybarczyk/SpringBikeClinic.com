@@ -15,7 +15,9 @@ public class WorkOrderDto {
     private LocalDateTime submittedDateTime;
     private WorkOrderStatus status;
 
-    private BikeDto bike;
+    private Long bikeId;
+    private LocalDate customerDropOffDate;
+    private LocalDate customerPickUpDate;
     private LocalDate estimatedCompletionDate;
     private LocalDate actualCompletionDate;
     private String customerNotes;

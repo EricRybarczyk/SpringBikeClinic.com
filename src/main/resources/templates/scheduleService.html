@@ -5,14 +5,70 @@
     <title>Schedule Service :: Spring Bike Clinic</title>
 </head>
 <body>
+<!--/*@thymesVar id="workOrderDto" type="com.springbikeclinic.web.dto.WorkOrderDto"*/-->
 <!--/*@thymesVar id="workType" type="com.springbikeclinic.web.domain.WorkType"*/-->
+<!--/*@thymesVar id="bikeList" type="java.util.List<com.springbikeclinic.web.dto.BikeDto>"*/-->
 <div class="container main-content" layout:fragment="page-content">
 
-    <h1>Schedule Some Service:</h1>
+    <div class="row mt-3">
+        <div class="col-sm-6 offset-sm-1"><h1>Schedule Service: <span th:text="${workType.name}">Work Type</span></h1></div>
+    </div>
 
-    <h2>not built yet</h2>
+    <div class="row mb-4">
+        <div th:text="${workType.description}" class="col-sm-9 offset-sm-1"></div>
+    </div>
 
-    <h3 th:text="${workType.name}">Work Type Description</h3>
+    <form th:object="${workOrderDto}" th:action="@{/services/schedule/save}" method="post">
+
+        <div class="form-group row">
+            <label for="bikeList" class="col-sm-2 offset-sm-1 col-form-label">Bike to be serviced:</label>
+            <div class="col-sm-4">
+                <select name="bikeList" id="bikeList" class="form-control" th:field="*{bikeId}">
+                    <option th:remove="all">My Mountain Bike</option>
+                    <option th:remove="all">My Gravel Bike</option>
+                    <option th:each="bike : ${bikeList}"
+                            th:value="${bike.id}"
+                            th:text="${bike.modelYear + ' ' + bike.manufacturerName + ' ' + bike.modelName}">Bike details
+                    </option>
+                </select>
+                <div th:if="${#fields.hasErrors('bikeId')}" th:errors="*{bikeId}" class="invalid-feedback">
+                    error message
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="customerDropOffDate" class="col-sm-2 offset-sm-1 col-form-label">Drop off date:</label>
+            <div class="col-sm-4">
+                <input type="date" name="customerDropOffDate" id="customerDropOffDate" class="form-control">
+                <div th:if="${#fields.hasErrors('customerDropOffDate')}" th:errors="*{customerDropOffDate}" class="invalid-feedback">
+                    error message
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="customerNotes" class="col-sm-2 offset-sm-1 col-form-label">Additional comments:</label>
+            <div class="col-sm-4">
+                <textarea name="customerNotes" id="customerNotes" class="form-control" rows="3"></textarea>
+                <div th:if="${#fields.hasErrors('customerNotes')}" th:errors="*{customerNotes}" class="invalid-feedback">
+                    error message
+                </div>
+            </div>
+        </div>
+
+        <div class="row my-2">
+            <div class="col-sm-2 offset-sm-1">Price:</div>
+            <div class="col-sm-4"><span class="font-italic" th:text="${'$' + workType.price}"></span></div>
+        </div>
+
+        <div class="form-group row mt-3">
+            <div class="col-sm-3 offset-sm-3">
+                <button class="btn btn-site-primary" type="submit">Request Service</button>
+            </div>
+        </div>
+
+    </form>
 
 </div>
 

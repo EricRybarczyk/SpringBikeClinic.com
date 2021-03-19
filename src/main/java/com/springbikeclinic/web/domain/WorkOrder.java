@@ -36,6 +36,8 @@ public class WorkOrder {
     @JoinColumn(name = "bike_id")
     private Bike bike;
 
+    private LocalDate customerDropOffDate;
+    private LocalDate customerPickUpDate;
     private LocalDate estimatedCompletionDate;
     private LocalDate actualCompletionDate;
     private String customerNotes;
