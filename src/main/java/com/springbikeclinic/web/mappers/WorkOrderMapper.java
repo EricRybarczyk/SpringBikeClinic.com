@@ -6,6 +6,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 
+// TODO: probably remove this mapper, not going to use it because not a 1-to-1 mapping thing, the Service will do more work
+
+
 @Mapper
 public interface WorkOrderMapper {
 

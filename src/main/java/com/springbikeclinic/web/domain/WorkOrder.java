@@ -22,6 +22,7 @@ public class WorkOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private LocalDateTime createdDateTime;
     private LocalDateTime submittedDateTime;
 

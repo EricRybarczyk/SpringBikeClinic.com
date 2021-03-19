@@ -5,12 +5,15 @@ import com.springbikeclinic.web.domain.security.SecurityUser;
 import com.springbikeclinic.web.dto.BikeDto;
 import com.springbikeclinic.web.dto.WorkOrderDto;
 import com.springbikeclinic.web.services.BikeService;
+import com.springbikeclinic.web.services.WorkOrderService;
 import com.springbikeclinic.web.services.WorkTypeService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Comparator;
 import java.util.List;
@@ -18,16 +21,18 @@ import java.util.List;
 @Controller
 @RequestMapping("services")
 @RequiredArgsConstructor
+@Slf4j
 public class ServicesController {
 
     private final WorkTypeService workTypeService;
     private final BikeService bikeService;
+    private final WorkOrderService workOrderService;
 
     private static final String MODEL_ATTRIBUTE_WORK_ORDER = "workOrderDto";
     private static final String MODEL_ATTRIBUTE_WORK_TYPE = "workType";
     private static final String MODEL_ATTRIBUTE_BIKE_LIST = "bikeList";
 
-    @RequestMapping
+    @GetMapping
     public String services(Model model) {
         final List<WorkType> workTypes = workTypeService.listWorkTypes();
         model.addAttribute("workTypeList", workTypes);
@@ -42,7 +47,7 @@ public class ServicesController {
         return "redirect:/services";
     }
 
-    @RequestMapping("/schedule/{workTypeId}")
+    @GetMapping("/schedule/{workTypeId}")
     public String scheduleService(Model model, @PathVariable Long workTypeId, Principal principal) {
         final Long userId = SecurityUser.from(principal).getUser().getId();
         final WorkType workType = workTypeService.getWorkType(workTypeId);
@@ -56,5 +61,17 @@ public class ServicesController {
         model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, bikes);
 
         return "scheduleService";
+    }
+
+    @PostMapping("/schedule/save")
+    public String saveServiceRequest(@ModelAttribute("workOrderDto") @Valid WorkOrderDto workOrderDto, BindingResult bindingResult, Principal principal) {
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(e -> log.debug(e.toString()));
+            return "scheduleService";
+        }
+
+        final Long workOrderId = workOrderService.createWorkOrder(workOrderDto, SecurityUser.from(principal).getUser());
+
+        return String.format("redirect:/account/history?w=%s", workOrderId);
     }
 }

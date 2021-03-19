@@ -20,6 +20,8 @@
 
     <form th:object="${workOrderDto}" th:action="@{/services/schedule/save}" method="post">
 
+        <input type="hidden" name="workTypeId" th:value="${workType.id}">
+
         <div class="form-group row">
             <label for="bikeList" class="col-sm-2 offset-sm-1 col-form-label">Bike to be serviced:</label>
             <div class="col-sm-4">

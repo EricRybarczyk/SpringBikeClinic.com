@@ -4,6 +4,7 @@ import com.springbikeclinic.web.TestData;
 import com.springbikeclinic.web.domain.WorkType;
 import com.springbikeclinic.web.security.WithMockCustomUser;
 import com.springbikeclinic.web.services.BikeService;
+import com.springbikeclinic.web.services.WorkOrderService;
 import com.springbikeclinic.web.services.WorkTypeServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ class ServicesControllerTest {
 
     @MockBean
     private BikeService bikeService;
+
+    @MockBean
+    private WorkOrderService workOrderService;
 
     @MockBean
     private AuthenticationManager authenticationManager;
