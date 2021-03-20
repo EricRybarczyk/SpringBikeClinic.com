@@ -8,6 +8,7 @@ import com.springbikeclinic.web.repositories.WorkItemRepository;
 import com.springbikeclinic.web.repositories.WorkOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 
@@ -22,6 +23,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
     private final BikeMapper bikeMapper;
 
     @Override
+    @Transactional
     public Long createWorkOrder(WorkOrderDto workOrderDto, User user) {
 
         final Bike bike = bikeMapper.bikeDtoToBike(bikeService.getBikeForUser(workOrderDto.getBikeId(), user.getId()));
@@ -44,6 +46,7 @@ public class WorkOrderServiceImpl implements WorkOrderService {
         detachedWorkItem.setWorkOrder(savedWorkOrder);
         detachedWorkItem.setCreatedDateTime(LocalDateTime.now());
         detachedWorkItem.setStatus(WorkItemStatus.PENDING);
+        detachedWorkItem.setPrice(workType.getPrice());
         // the WorkType name field is the basic type of work (don't use description because that is more like a marketing description)
         detachedWorkItem.setDescription(workType.getName());
 
