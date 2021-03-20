@@ -1,10 +1,12 @@
 package com.springbikeclinic.web;
 
-import com.springbikeclinic.web.domain.Bike;
-import com.springbikeclinic.web.domain.BikeType;
-import com.springbikeclinic.web.domain.WorkType;
+import com.springbikeclinic.web.domain.*;
+import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.BikeDto;
+import com.springbikeclinic.web.dto.WorkOrderDto;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +35,35 @@ public class TestData {
     }
 
 
+    public static WorkOrderDto getNewWorkOrderDto() {
+        WorkOrderDto workOrderDto = new WorkOrderDto();
+
+        workOrderDto.setCreatedDateTime(LocalDateTime.now());
+        workOrderDto.setCustomerDropOffDate(LocalDate.now());
+        workOrderDto.setCustomerNotes("customer notes");
+        workOrderDto.setBikeId(1L);
+        workOrderDto.setWorkTypeId(1L);
+
+        return workOrderDto;
+    }
+
+    public static WorkOrder getExistingWorkOrder() {
+        WorkOrder workOrder = new WorkOrder();
+
+        User user = new User();
+        user.setId(1L);
+
+        workOrder.setId(1L);
+        workOrder.setCreatedDateTime(LocalDateTime.now());
+        workOrder.setSubmittedDateTime(LocalDateTime.now());
+        workOrder.setStatus(WorkOrderStatus.SUBMITTED);
+        workOrder.setUser(user);
+        workOrder.setBike(getBike());
+        workOrder.setCustomerDropOffDate(LocalDate.now());
+        workOrder.setCustomerNotes("customer notes");
+
+        return  workOrder;
+    }
 
     public static Bike getBike() {
         Bike bike = new Bike();

@@ -22,6 +22,15 @@
 
         <input type="hidden" name="workTypeId" th:value="${workType.id}">
 
+        <div class="row mb-4">
+            <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger alert-dismissible fade show mt-2 mb-4" role="alert">
+                Please correct the errors below
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span class="lni lni-16 lni-close" aria-hidden="true"></span>
+                </button>
+            </div>
+        </div>
+
         <div class="form-group row">
             <label for="bikeList" class="col-sm-2 offset-sm-1 col-form-label">Bike to be serviced:</label>
             <div class="col-sm-4">
@@ -42,7 +51,8 @@
         <div class="form-group row">
             <label for="customerDropOffDate" class="col-sm-2 offset-sm-1 col-form-label">Drop off date:</label>
             <div class="col-sm-4">
-                <input type="date" name="customerDropOffDate" id="customerDropOffDate" class="form-control">
+                <input type="date" name="customerDropOffDate" id="customerDropOffDate" class="form-control" required
+                       th:class="${#fields.hasErrors('customerDropOffDate')} ? 'form-control is-invalid' : 'form-control'">
                 <div th:if="${#fields.hasErrors('customerDropOffDate')}" th:errors="*{customerDropOffDate}" class="invalid-feedback">
                     error message
                 </div>
@@ -52,7 +62,8 @@
         <div class="form-group row">
             <label for="customerNotes" class="col-sm-2 offset-sm-1 col-form-label">Additional comments:</label>
             <div class="col-sm-4">
-                <textarea name="customerNotes" id="customerNotes" class="form-control" rows="3"></textarea>
+                <textarea name="customerNotes" id="customerNotes" class="form-control" rows="3"  required
+                          th:class="${#fields.hasErrors('customerNotes')} ? 'form-control is-invalid' : 'form-control'"></textarea>
                 <div th:if="${#fields.hasErrors('customerNotes')}" th:errors="*{customerNotes}" class="invalid-feedback">
                     error message
                 </div>

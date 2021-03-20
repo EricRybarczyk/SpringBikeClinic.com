@@ -2,6 +2,7 @@ package com.springbikeclinic.web.controllers;
 
 import com.springbikeclinic.web.domain.WorkType;
 import com.springbikeclinic.web.domain.security.SecurityUser;
+import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.BikeDto;
 import com.springbikeclinic.web.dto.WorkOrderDto;
 import com.springbikeclinic.web.services.BikeService;
@@ -49,29 +50,34 @@ public class ServicesController {
 
     @GetMapping("/schedule/{workTypeId}")
     public String scheduleService(Model model, @PathVariable Long workTypeId, Principal principal) {
-        final Long userId = SecurityUser.from(principal).getUser().getId();
-        final WorkType workType = workTypeService.getWorkType(workTypeId);
-        final List<BikeDto> bikes = bikeService.getBikes(userId);
-
-        // sort by year since year will be shown first in the drop-down items in the View so this "feels right"
-        bikes.sort(Comparator.comparingInt(BikeDto::getModelYear));
-
         model.addAttribute(MODEL_ATTRIBUTE_WORK_ORDER, new WorkOrderDto());
-        model.addAttribute(MODEL_ATTRIBUTE_WORK_TYPE, workType);
-        model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, bikes);
+        model.addAttribute(MODEL_ATTRIBUTE_WORK_TYPE, workTypeService.getWorkType(workTypeId));
+        model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, getBikesForUser(SecurityUser.from(principal).getUser()));
 
         return "scheduleService";
     }
 
     @PostMapping("/schedule/save")
-    public String saveServiceRequest(@ModelAttribute("workOrderDto") @Valid WorkOrderDto workOrderDto, BindingResult bindingResult, Principal principal) {
+    public String saveServiceRequest(@ModelAttribute("workOrderDto") @Valid WorkOrderDto workOrderDto, Model model, BindingResult bindingResult, Principal principal) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(e -> log.debug(e.toString()));
+
+            model.addAttribute(MODEL_ATTRIBUTE_WORK_ORDER, workOrderDto);
+            model.addAttribute(MODEL_ATTRIBUTE_WORK_TYPE, workTypeService.getWorkType(workOrderDto.getWorkTypeId()));
+            model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, getBikesForUser(SecurityUser.from(principal).getUser()));
+
             return "scheduleService";
         }
 
         final Long workOrderId = workOrderService.createWorkOrder(workOrderDto, SecurityUser.from(principal).getUser());
 
         return String.format("redirect:/account/history?w=%s", workOrderId);
+    }
+
+    private List<BikeDto> getBikesForUser(User user) {
+        final List<BikeDto> bikes = bikeService.getBikes(user.getId());
+        // sort by year since year will be shown first in the drop-down items in the View so this "feels right"
+        bikes.sort(Comparator.comparingInt(BikeDto::getModelYear));
+        return bikes;
     }
 }
