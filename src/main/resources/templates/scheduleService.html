@@ -52,6 +52,7 @@
             <label for="customerDropOffDate" class="col-sm-2 offset-sm-1 col-form-label">Drop off date:</label>
             <div class="col-sm-4">
                 <input type="date" name="customerDropOffDate" id="customerDropOffDate" class="form-control" required
+                       th:attr="min=${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
                        th:class="${#fields.hasErrors('customerDropOffDate')} ? 'form-control is-invalid' : 'form-control'">
                 <div th:if="${#fields.hasErrors('customerDropOffDate')}" th:errors="*{customerDropOffDate}" class="invalid-feedback">
                     error message

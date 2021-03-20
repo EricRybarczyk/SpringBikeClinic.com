@@ -4,6 +4,7 @@ import com.springbikeclinic.web.domain.WorkOrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -23,6 +24,7 @@ public class WorkOrderDto {
     private Long bikeId;
 
     @NotNull
+    @FutureOrPresent
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate customerDropOffDate;
 
