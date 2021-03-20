@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -114,15 +115,16 @@ class BikeServiceTest {
     void testDeleteBike_validInput() throws Exception {
         Bike bike = TestData.getBike();
         when(bikeRepository.findBikeByIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(bike));
-        ArgumentCaptor<Long> argumentCaptor = ArgumentCaptor.forClass(Long.class);
+        ArgumentCaptor<Bike> argumentCaptor = ArgumentCaptor.forClass(Bike.class);
 
         bikeService.deleteBikeForUser(bike.getId(), 1L);
 
         verify(bikeRepository, times(1)).findBikeByIdAndUserId(anyLong(), anyLong());
 
-        verify(bikeRepository, times(1)).deleteById(argumentCaptor.capture());
-        final Long captorValue = argumentCaptor.getValue();
-        assertThat(captorValue).isEqualTo(bike.getId());
+        verify(bikeRepository, times(1)).save(argumentCaptor.capture());
+        final Bike captorValue = argumentCaptor.getValue();
+        assertThat(captorValue.getDeleteDateTime()).isNotNull();
+        assertThat(captorValue.getDeleteDateTime()).isBeforeOrEqualTo(LocalDateTime.now());
     }
 
     @Test

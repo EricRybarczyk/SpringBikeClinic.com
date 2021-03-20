@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -79,7 +80,9 @@ public class BikeServiceImpl implements BikeService {
         // get the Bike first to make sure it belongs to the specified user
         Bike bikeForUser = bikeRepository.findBikeByIdAndUserId(bikeId, userId)
                 .orElseThrow(() -> new NotFoundException("Requested bike was not found"));
-        bikeRepository.deleteById(bikeForUser.getId());
+        // soft-delete
+        bikeForUser.setDeleteDateTime(LocalDateTime.now());
+        bikeRepository.save(bikeForUser);
     }
 
 }
