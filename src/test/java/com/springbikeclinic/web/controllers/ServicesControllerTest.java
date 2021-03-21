@@ -120,6 +120,9 @@ class ServicesControllerTest {
     @WithMockCustomUser
     @Test
     void requestServicePost_invalidInputMissingValues_asAuthenticatedUser_isBadRequest() throws Exception {
+        final List<WorkType> workTypes = TestData.getWorkTypesList();
+        when(workTypeService.listWorkTypes()).thenReturn(workTypes);
+        when(workTypeService.getWorkType(anyLong())).thenReturn(workTypes.get(0));
 
         mockMvc.perform(post(POST_SCHEDULE_SERVICE_PATH)
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -128,7 +131,10 @@ class ServicesControllerTest {
                 .param("customerDropOffDate", "") // empty is not valid
                 .param("customerNotes", "") // empty not valid
                 .with(csrf()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(model().attributeHasFieldErrors("workOrderDto","customerDropOffDate"))
+                .andExpect(model().attributeHasFieldErrors("workOrderDto","customerNotes"))
+                .andExpect(view().name(EXPECTED_GET_SCHEDULE_SERVICE_VIEW_NAME));
 
         verifyNoInteractions(workOrderService);
     }

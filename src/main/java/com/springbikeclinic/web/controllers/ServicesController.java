@@ -50,21 +50,18 @@ public class ServicesController {
 
     @GetMapping("/schedule/{workTypeId}")
     public String scheduleService(Model model, @PathVariable Long workTypeId, Principal principal) {
-        model.addAttribute(MODEL_ATTRIBUTE_WORK_ORDER, new WorkOrderDto());
-        model.addAttribute(MODEL_ATTRIBUTE_WORK_TYPE, workTypeService.getWorkType(workTypeId));
-        model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, getBikesForUser(SecurityUser.from(principal).getUser()));
+
+        prepareFormModel(model, new WorkOrderDto(), workTypeId, SecurityUser.from(principal).getUser());
 
         return "scheduleService";
     }
 
     @PostMapping("/schedule/save")
-    public String saveServiceRequest(@ModelAttribute("workOrderDto") @Valid WorkOrderDto workOrderDto, Model model, BindingResult bindingResult, Principal principal) {
+    public String saveServiceRequest(@ModelAttribute("workOrderDto") @Valid WorkOrderDto workOrderDto, BindingResult bindingResult, Principal principal, Model model) {
         if (bindingResult.hasErrors()) {
             bindingResult.getAllErrors().forEach(e -> log.debug(e.toString()));
 
-            model.addAttribute(MODEL_ATTRIBUTE_WORK_ORDER, workOrderDto);
-            model.addAttribute(MODEL_ATTRIBUTE_WORK_TYPE, workTypeService.getWorkType(workOrderDto.getWorkTypeId()));
-            model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, getBikesForUser(SecurityUser.from(principal).getUser()));
+            prepareFormModel(model, workOrderDto, workOrderDto.getWorkTypeId(), SecurityUser.from(principal).getUser());
 
             return "scheduleService";
         }
@@ -72,6 +69,13 @@ public class ServicesController {
         final Long workOrderId = workOrderService.createWorkOrder(workOrderDto, SecurityUser.from(principal).getUser());
 
         return String.format("redirect:/account/history?w=%s", workOrderId);
+    }
+
+    private void prepareFormModel(Model model, WorkOrderDto workOrderDto, Long workTypeId, User user) {
+        workOrderDto.setWorkTypeId(workTypeId);
+        model.addAttribute(MODEL_ATTRIBUTE_WORK_ORDER, workOrderDto);
+        model.addAttribute(MODEL_ATTRIBUTE_WORK_TYPE, workTypeService.getWorkType(workTypeId));
+        model.addAttribute(MODEL_ATTRIBUTE_BIKE_LIST, getBikesForUser(user));
     }
 
     private List<BikeDto> getBikesForUser(User user) {

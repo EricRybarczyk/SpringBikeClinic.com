@@ -34,7 +34,7 @@ public class WorkOrderDto {
 
     @NotNull
     @NotEmpty
-    @Size(min = 3, max = 255, message = "Must be between {min} and {max} characters long")
+    @Size(min = 3, max = 255, message = "must be between {min} and {max} characters long")
     private String customerNotes;
 
     @NotNull
