@@ -5,6 +5,7 @@ import com.springbikeclinic.web.domain.WorkItem;
 import com.springbikeclinic.web.domain.WorkOrder;
 import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.BikeDto;
+import com.springbikeclinic.web.dto.ServiceHistoryItem;
 import com.springbikeclinic.web.dto.WorkOrderDto;
 import com.springbikeclinic.web.exceptions.NotFoundException;
 import com.springbikeclinic.web.mappers.BikeMapper;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -77,6 +80,31 @@ class WorkOrderServiceTest {
 
         verifyNoInteractions(workOrderRepository);
         verifyNoInteractions(workItemRepository);
+    }
+
+    @Test
+    void testGetServiceHistory_validUserWithData_listReturnedHasItems() throws Exception {
+        final List<WorkOrder> sourceWorkOrderList = TestData.getExistingWorkOrderList();
+        when(workOrderRepository.findAllByUser(any(User.class))).thenReturn(sourceWorkOrderList);
+
+        User user = new User();
+        user.setId(1L);
+        final List<ServiceHistoryItem> serviceHistory = workOrderService.getServiceHistory(user);
+
+        assertThat(serviceHistory).isNotNull();
+        assertThat(serviceHistory.size()).isEqualTo(sourceWorkOrderList.size());
+    }
+
+    @Test
+    void testGetServiceHistory_noDataFromRepository_listReturnedIsEmpty() throws Exception {
+        when(workOrderRepository.findAllByUser(any(User.class))).thenReturn(new ArrayList<>());
+
+        User user = new User();
+        user.setId(999L);
+        final List<ServiceHistoryItem> serviceHistory = workOrderService.getServiceHistory(user);
+
+        assertThat(serviceHistory).isNotNull();
+        assertThat(serviceHistory.size()).isEqualTo(0);
     }
 
 }

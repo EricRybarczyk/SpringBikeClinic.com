@@ -2,6 +2,7 @@ package com.springbikeclinic.web.services;
 
 import com.springbikeclinic.web.domain.*;
 import com.springbikeclinic.web.domain.security.User;
+import com.springbikeclinic.web.dto.ServiceHistoryItem;
 import com.springbikeclinic.web.dto.WorkOrderDto;
 import com.springbikeclinic.web.mappers.BikeMapper;
 import com.springbikeclinic.web.repositories.WorkItemRepository;
@@ -10,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -53,6 +57,29 @@ public class WorkOrderServiceImpl implements WorkOrderService {
         workItemRepository.save(detachedWorkItem);
 
         return savedWorkOrder.getId();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ServiceHistoryItem> getServiceHistory(User user) {
+        final List<WorkOrder> workOrderList = workOrderRepository.findAllByUser(user);
+        final List<ServiceHistoryItem> result = new ArrayList<>();
+
+        for (WorkOrder workOrder : workOrderList) {
+            // currently a WorkOrder will have a single WorkItem so we are keeping this simple for now
+            final Optional<WorkItem> optionalWorkItem = workOrder.getWorkItems().stream().findFirst();
+            result.add(
+                    ServiceHistoryItem.builder()
+                            .id(workOrder.getId())
+                            .serviceDate(workOrder.getSubmittedDateTime().toLocalDate())
+                            .bikeDto(bikeMapper.bikeToBikeDto(workOrder.getBike()))
+                            .serviceDescription(optionalWorkItem.isPresent() ? optionalWorkItem.get().getDescription() : "SERVICE")
+                            .status(workOrder.getStatus().name())
+                            .build()
+            );
+        }
+
+        return result;
     }
 
 }

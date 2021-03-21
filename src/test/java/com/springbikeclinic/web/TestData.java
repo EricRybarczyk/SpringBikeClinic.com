@@ -65,6 +65,14 @@ public class TestData {
         return  workOrder;
     }
 
+    public static List<WorkOrder> getExistingWorkOrderList() {
+        final WorkOrder workOrder1 = getExistingWorkOrder();
+        workOrder1.setId(1L);
+        final WorkOrder workOrder2 = getExistingWorkOrder();
+        workOrder2.setId(2L);
+        return List.of(workOrder1, workOrder2);
+    }
+
     public static Bike getBike() {
         Bike bike = new Bike();
         bike.setId(1L);

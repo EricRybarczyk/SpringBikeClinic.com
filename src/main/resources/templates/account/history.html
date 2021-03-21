@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout/layout}">
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
 <head>
     <meta charset="UTF-8">
     <title>My Service History :: Spring Bike Clinic</title>
 </head>
 <body>
 
-<!--/*@thymesVar id="customerAccountDto" type="com.springbikeclinic.web.dto.CustomerAccountDto"*/-->
+<!--/*@thymesVar id="serviceHistoryList" type="java.util.List<com.springbikeclinic.web.dto.ServiceHistoryItem>"*/-->
 <div class="container main-content" layout:fragment="page-content">
 
     <div class="row">
         <div class="col-md-6">
-            <h1 class="ml-1">My Service History</h1>
+            <h1 class="ml-1">Service History</h1>
         </div>
     </div>
     <div class="row">
@@ -21,11 +21,42 @@
         <div class="col-md-9">
             <section class="pt-3">
 
-                <div class="row pt-3" sec:authorize="isAuthenticated()">
-                    <div class="col-md-12">
-                        <p th:text="'Welcome ' + ${customerAccountDto?.firstName}">Welcome</p>
+                <div class="row pt-3">
+                    <div class="col-md-12 mb-3">
+                        <h3>Service History for My Bikes</h3>
                     </div>
                 </div>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Bike</th>
+                        <th scope="col">Service</th>
+                        <th scope="col">Status</th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    <tr th:if="${serviceHistoryList == null || serviceHistoryList.size() == 0}">
+                        <td colspan="5" class="text-center">You have no service history yet</td>
+                    </tr>
+
+                    <tr th:each="serviceHistoryItem : ${serviceHistoryList}">
+                        <td th:text="${serviceHistoryItem.serviceDate}">Date</td>
+                        <td th:text="${serviceHistoryItem.bikeDto.manufacturerName + ' ' + serviceHistoryItem.bikeDto.modelName}">Bike</td>
+                        <td th:text="${serviceHistoryItem.serviceDescription}">Service</td>
+                        <td th:text="${serviceHistoryItem.status}">Status</td>
+                        <td>
+                            <div class="row justify-content-center">
+                                <a class="btn btn-site-secondary btn-sm" th:href="@{'/account/history/detail/' + ${serviceHistoryItem.id}}">details</a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
 
             </section>
         </div>

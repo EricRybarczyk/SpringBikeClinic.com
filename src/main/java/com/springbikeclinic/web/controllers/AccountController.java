@@ -54,12 +54,6 @@ public class AccountController {
         return "account/details";
     }
 
-    @GetMapping("/history")
-    public String accountHistory(Model model, Principal principal) {
-        model.addAttribute(MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT, CustomerAccountDto.from(principal));
-        return "account/history";
-    }
-
     @PostMapping("/create")
     public String createAccount(final HttpServletRequest request, @ModelAttribute("createAccountDto") @Valid CreateAccountDto createAccountDto, BindingResult bindingResult, Model model) {
         log.debug("POST Request to create an account for username: {}", createAccountDto.getEmail());
