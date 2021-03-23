@@ -39,4 +39,7 @@ public class WorkOrderDto {
 
     @NotNull
     private Long workTypeId;
+
+    private WorkItemDto workItemDto;
+    private BikeDto bikeDto;
 }

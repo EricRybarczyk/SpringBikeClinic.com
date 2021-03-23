@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Work Order :: Spring Bike Clinic</title>
+</head>
+<body>
+
+<!--/*@thymesVar id="workOrderDto" type="com.springbikeclinic.web.dto.WorkOrderDto"*/-->
+<div class="container main-content" layout:fragment="page-content">
+
+    <div class="row">
+        <div class="col-md-6">
+            <h1 class="ml-1">Service History</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <section th:replace="fragments/account/accountSecondaryNav :: accountSecondaryNav ('history')"></section>
+        </div>
+        <div class="col-md-9">
+            <section class="pt-3">
+
+                <div class="row pt-3">
+                    <div class="col-md-10 offset-md-1 mb-3">
+                        <h3>Service Details</h3>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-3 offset-sm-1">Service Type</div>
+                    <div class="col-sm-8" th:text="${workOrderDto.getWorkItemDto().description}">value</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-3 offset-sm-1">Estimated Completion</div>
+                    <div class="col-sm-8" th:text="${workOrderDto.estimatedCompletionDate}">value</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-3 offset-sm-1">Status</div>
+                    <div class="col-sm-8" th:text="${workOrderDto.status}">value</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-3 offset-sm-1">Bike Details</div>
+                    <div class="col-sm-8" th:text="${workOrderDto.getBikeDto().manufacturerName + ' ' + workOrderDto.getBikeDto().modelName}">value</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-3 offset-sm-1">CustomerDrop Off Date</div>
+                    <div class="col-sm-8" th:text="${workOrderDto.customerDropOffDate}">value</div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-sm-3 offset-sm-1">Customer Notes</div>
+                    <div class="col-sm-6" th:text="${workOrderDto.customerNotes}">value</div>
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-sm-6 offset-sm-1"><a class="btn btn-site-secondary btn-sm" href="javascript:window.history.back();"><span class="lni lni-arrow-left-circle mr-2"></span> Back</a></div>
+                </div>
+
+            </section>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

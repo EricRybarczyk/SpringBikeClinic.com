@@ -4,7 +4,10 @@ import com.springbikeclinic.web.domain.*;
 import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.ServiceHistoryItem;
 import com.springbikeclinic.web.dto.WorkOrderDto;
+import com.springbikeclinic.web.exceptions.NotFoundException;
 import com.springbikeclinic.web.mappers.BikeMapper;
+import com.springbikeclinic.web.mappers.WorkItemMapper;
+import com.springbikeclinic.web.mappers.WorkOrderMapper;
 import com.springbikeclinic.web.repositories.WorkItemRepository;
 import com.springbikeclinic.web.repositories.WorkOrderRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,8 @@ public class WorkOrderServiceImpl implements WorkOrderService {
     private final WorkTypeService workTypeService;
     private final BikeService bikeService;
     private final BikeMapper bikeMapper;
+    private final WorkOrderMapper workOrderMapper;
+    private final WorkItemMapper workItemMapper;
 
     @Override
     @Transactional
@@ -80,6 +85,32 @@ public class WorkOrderServiceImpl implements WorkOrderService {
         }
 
         return result;
+    }
+
+    @Override
+    @Transactional
+    public WorkOrderDto getWorkOrder(Long workOrderId, User user) {
+        final WorkOrder workOrder = workOrderRepository.findByIdAndUser(workOrderId, user)
+                .orElseThrow(() -> new NotFoundException("Work Order not found"));
+
+        final WorkOrderDto workOrderDto = workOrderMapper.workOrderToWorkOrderDto(workOrder);
+        workOrderDto.setBikeId(workOrder.getBike().getId());
+        workOrderDto.setBikeDto(bikeMapper.bikeToBikeDto(workOrder.getBike()));
+
+        // currently a WorkOrder will have a single WorkItem so we are keeping this simple for now
+        final Optional<WorkItem> optionalWorkItem = workOrder.getWorkItems().stream().findFirst();
+        optionalWorkItem.ifPresent(
+                workItem -> {
+                    workOrderDto.setWorkTypeId(workItem.getId());
+                    workOrderDto.setWorkItemDto(workItemMapper.workItemToWorkItemDto(workItem));
+                });
+
+        // fudge the numbers since this is just a fake demo app
+        if (workOrderDto.getEstimatedCompletionDate() == null) {
+            workOrderDto.setEstimatedCompletionDate(workOrderDto.getCustomerDropOffDate().plusDays(3));
+        }
+
+        return workOrderDto;
     }
 
 }

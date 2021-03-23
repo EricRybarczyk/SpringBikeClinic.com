@@ -1,14 +1,19 @@
 package com.springbikeclinic.web.services;
 
 import com.springbikeclinic.web.TestData;
+import com.springbikeclinic.web.domain.Bike;
 import com.springbikeclinic.web.domain.WorkItem;
 import com.springbikeclinic.web.domain.WorkOrder;
+import com.springbikeclinic.web.domain.WorkOrderStatus;
 import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.BikeDto;
 import com.springbikeclinic.web.dto.ServiceHistoryItem;
+import com.springbikeclinic.web.dto.WorkItemDto;
 import com.springbikeclinic.web.dto.WorkOrderDto;
 import com.springbikeclinic.web.exceptions.NotFoundException;
 import com.springbikeclinic.web.mappers.BikeMapper;
+import com.springbikeclinic.web.mappers.WorkItemMapper;
+import com.springbikeclinic.web.mappers.WorkOrderMapper;
 import com.springbikeclinic.web.repositories.WorkItemRepository;
 import com.springbikeclinic.web.repositories.WorkOrderRepository;
 import org.junit.jupiter.api.Test;
@@ -16,8 +21,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -43,6 +51,13 @@ class WorkOrderServiceTest {
 
     @Mock
     private BikeMapper bikeMapper;
+
+    @Mock
+    private WorkOrderMapper workOrderMapper;
+
+    @Mock
+    private WorkItemMapper workItemMapper;
+
 
     @InjectMocks
     private WorkOrderServiceImpl workOrderService;
@@ -105,6 +120,61 @@ class WorkOrderServiceTest {
 
         assertThat(serviceHistory).isNotNull();
         assertThat(serviceHistory.size()).isEqualTo(0);
+    }
+
+    @Test
+    void testGetWorkOrder_validRequest_workOrderReturned() throws Exception {
+        when(workOrderRepository.findByIdAndUser(anyLong(), any(User.class))).thenReturn(getMockWorkOrder());
+        when(workOrderMapper.workOrderToWorkOrderDto(any(WorkOrder.class))).thenReturn(getMockWorkOrderDto());
+        when(bikeMapper.bikeToBikeDto(any(Bike.class))).thenReturn(TestData.getExistingBikeDto());
+        when(workItemMapper.workItemToWorkItemDto(any(WorkItem.class))).thenReturn(getMockWorkOrderDto().getWorkItemDto());
+
+        final WorkOrderDto workOrderDto = workOrderService.getWorkOrder(1L, User.builder().id(5150L).build());
+
+        assertThat(workOrderDto).isNotNull();
+        assertThat(workOrderDto.getBikeDto()).isNotNull();
+        assertThat(workOrderDto.getWorkItemDto()).isNotNull();
+
+        verify(workOrderRepository, times(1)).findByIdAndUser(anyLong(), any(User.class));
+    }
+
+    private WorkOrderDto getMockWorkOrderDto() {
+        WorkOrderDto workOrder = new WorkOrderDto();
+        workOrder.setId(1L);
+        workOrder.setCreatedDateTime(LocalDateTime.now());
+        workOrder.setCustomerDropOffDate(LocalDate.now());
+        workOrder.setCustomerNotes("notes");
+        workOrder.setStatus(WorkOrderStatus.SUBMITTED);
+        workOrder.setSubmittedDateTime(LocalDateTime.now());
+
+        WorkItemDto workItem = new WorkItemDto();
+        workItem.setId(88L);
+        workItem.setDescription("work");
+
+        workOrder.setWorkTypeId(workItem.getId());
+        workOrder.setWorkItemDto(workItem);
+
+        return workOrder;
+    }
+
+    private Optional<WorkOrder> getMockWorkOrder() {
+        WorkOrder workOrder = new WorkOrder();
+        workOrder.setId(1L);
+        workOrder.setCreatedDateTime(LocalDateTime.now());
+        workOrder.setCustomerDropOffDate(LocalDate.now());
+        workOrder.setCustomerNotes("notes");
+        workOrder.setStatus(WorkOrderStatus.SUBMITTED);
+        workOrder.setSubmittedDateTime(LocalDateTime.now());
+
+        workOrder.setUser(User.builder().id(999L).email("a@b.co").build());
+        workOrder.setBike(TestData.getBike());
+
+        WorkItem workItem = new WorkItem();
+        workItem.setId(77L);
+        workItem.setWorkOrder(workOrder);
+        workOrder.getWorkItems().add(workItem);
+
+        return Optional.of(workOrder);
     }
 
 }

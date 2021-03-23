@@ -8,4 +8,5 @@ import java.util.List;
 public interface WorkOrderService {
     Long createWorkOrder(WorkOrderDto workOrderDto, User user);
     List<ServiceHistoryItem> getServiceHistory(User user);
+    WorkOrderDto getWorkOrder(Long workOrderId, User user);
 }
