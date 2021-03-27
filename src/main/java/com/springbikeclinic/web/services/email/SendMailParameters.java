@@ -1,4 +1,4 @@
-package com.springbikeclinic.web.dto;
+package com.springbikeclinic.web.services.email;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +11,6 @@ public class SendMailParameters {
 
     private String senderAddress;
     private String recipientAddress;
-    private String subject;
-    private String message;
+    private MessageContent messageContent;
 
 }

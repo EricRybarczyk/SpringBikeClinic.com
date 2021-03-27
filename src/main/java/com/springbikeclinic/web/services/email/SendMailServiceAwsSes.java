@@ -1,7 +1,7 @@
-package com.springbikeclinic.web.services;
+package com.springbikeclinic.web.services.email;
 
-import com.springbikeclinic.web.dto.SendMailParameters;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;
@@ -28,23 +28,17 @@ import java.util.Properties;
 @Slf4j
 public class SendMailServiceAwsSes implements SendMailService {
 
-    private static final Region REGION = Region.US_EAST_2;
+    @Value("${aws.region.default}")
+    private String awsRegion;
 
     @Override
     public void sendMessage(SendMailParameters sendMailParameters) {
-        // The email body for non-HTML email clients
-        String bodyText = "Hello,\r\n" + sendMailParameters.getMessage();
-
-        // The HTML body of the email
-        String bodyHTML = "<html><head></head><body><h1>Hello!</h1><p>"
-                + sendMailParameters.getMessage() + "</p></body></html>";
-
-        SesClient client = SesClient.builder()
-                .region(REGION)
-                .build();
-
         try {
-            send(client, sendMailParameters.getSenderAddress(), sendMailParameters.getRecipientAddress(), sendMailParameters.getSubject(), bodyText, bodyHTML);
+            SesClient client = SesClient.builder()
+                    .region(Region.of(awsRegion))
+                    .build();
+
+            send(client, sendMailParameters);
             client.close();
 
         } catch (IOException | MessagingException e) {
@@ -52,15 +46,15 @@ public class SendMailServiceAwsSes implements SendMailService {
         }
     }
 
-    public static void send(SesClient client, String sender, String recipient, String subject, String bodyText, String bodyHTML) throws MessagingException, IOException {
+    private void send(SesClient client, SendMailParameters sendMailParameters) throws MessagingException, IOException {
         // source: https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/javav2/example_code/ses
 
         Session session = Session.getDefaultInstance(new Properties());
         MimeMessage message = new MimeMessage(session);
 
-        message.setSubject(subject, "UTF-8");
-        message.setFrom(new InternetAddress(sender));
-        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
+        message.setSubject(sendMailParameters.getMessageContent().getSubject(), "UTF-8");
+        message.setFrom(new InternetAddress(sendMailParameters.getSenderAddress()));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(sendMailParameters.getRecipientAddress()));
 
         // Create a multipart/alternative child container
         MimeMultipart messageBody = new MimeMultipart("alternative");
@@ -70,11 +64,11 @@ public class SendMailServiceAwsSes implements SendMailService {
 
         // Define the text part
         MimeBodyPart textPart = new MimeBodyPart();
-        textPart.setContent(bodyText, "text/plain; charset=UTF-8");
+        textPart.setContent(sendMailParameters.getMessageContent().getPlainTextBody(), "text/plain; charset=UTF-8");
 
         // Define the HTML part
         MimeBodyPart htmlPart = new MimeBodyPart();
-        htmlPart.setContent(bodyHTML, "text/html; charset=UTF-8");
+        htmlPart.setContent(sendMailParameters.getMessageContent().getHtmlBody(), "text/html; charset=UTF-8");
 
         // Add the text and HTML parts to the child container
         messageBody.addBodyPart(textPart);

@@ -1,6 +1,4 @@
-package com.springbikeclinic.web.services;
-
-import com.springbikeclinic.web.dto.SendMailParameters;
+package com.springbikeclinic.web.services.email;
 
 public interface SendMailService {
 

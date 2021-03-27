@@ -51,7 +51,7 @@ public class User implements Serializable {
     private Boolean credentialsNonExpired = true;
 
     @Builder.Default
-    private Boolean enabled = true;
+    private Boolean enabled = false; // default to false because of email verification requirement
 
     public User() {
     }
@@ -68,7 +68,7 @@ public class User implements Serializable {
         this.accountNonExpired = accountNonExpired;
         this.accountNonLocked = accountNonLocked;
         this.credentialsNonExpired = credentialsNonExpired;
-        this.enabled = enabled;
+        this.enabled = false; // false because email verification is required separately
 
         if (bikes != null) {
             this.bikes = bikes;
@@ -80,7 +80,7 @@ public class User implements Serializable {
     }
 
     public User(Long id, String email, String password, String firstName, String lastName, Set<Authority> authorities) {
-        this(id, email, password, firstName, lastName, null, null, authorities, true, true, true, true);
+        this(id, email, password, firstName, lastName, null, null, authorities, true, true, true, false);
     }
 
 }

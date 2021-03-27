@@ -1,14 +1,16 @@
 package com.springbikeclinic.web.controllers;
 
+import com.springbikeclinic.web.domain.security.OnRegistrationCompleteEvent;
 import com.springbikeclinic.web.domain.security.SecurityUser;
 import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.CreateAccountDto;
 import com.springbikeclinic.web.dto.CustomerAccountDto;
 import com.springbikeclinic.web.dto.LoginDto;
-import com.springbikeclinic.web.security.StandAloneAuthenticator;
+import com.springbikeclinic.web.security.UserVerificationService;
 import com.springbikeclinic.web.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +19,10 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.Principal;
+
 
 @Controller
 @RequestMapping("account")
@@ -26,10 +31,12 @@ import java.security.Principal;
 public class AccountController {
 
     private final UserDetailsManager userDetailsManager;
-    private final StandAloneAuthenticator standAloneAuthenticator;
     private final UserService userService;
+    private final UserVerificationService userVerificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
     private static final String MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT = "customerAccountDto";
+    private static final String VERIFICATION_PATH = "/account/confirmToken";
 
     @InitBinder
     public void setAllowedFields(WebDataBinder dataBinder) {
@@ -77,11 +84,51 @@ public class AccountController {
 
         userDetailsManager.createUser(new SecurityUser(user));
 
-        // log them in
-        standAloneAuthenticator.authenticateUser(request, createAccountDto.getEmail(), createAccountDto.getCreatePassword());
+        User createdUser = ((SecurityUser) userDetailsManager.loadUserByUsername(createAccountDto.getEmail())).getUser();
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, createdUser, getVerificationUrl(request).toString()));
 
         // redirect so browser is not left on the /account/create transient path
-        return "redirect:/account";
+        return "redirect:/account/pending";
+    }
+
+    private URL getVerificationUrl(HttpServletRequest request) {
+        String hostname = request.getLocalName();
+        if (hostname.equalsIgnoreCase("ip6-localhost")) {
+            hostname = "localhost";
+        }
+        try {
+            if (request.getServerPort() == 80) {
+                // don't include port if it is default 80
+                return new URL(request.getScheme(), hostname, VERIFICATION_PATH);
+            }
+            return new URL(request.getScheme(), hostname, request.getServerPort(), VERIFICATION_PATH);
+        } catch (MalformedURLException e) {
+            log.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    @GetMapping("/pending")
+    public String showAccountVerificationPending() {
+        return "account/pending";
+    }
+
+    @GetMapping("/confirmToken")
+    public String processVerificationToken(@RequestParam("token") String token) {
+
+        switch (userVerificationService.verifyUser(token)) {
+            case INVALID:
+                return "account/invalid";
+            case EXPIRED:
+                return "account/expired";
+            default:
+                return "redirect:/account/verified";
+        }
+    }
+
+    @GetMapping("/verified")
+    public String showAccountVerificationComplete() {
+        return "account/verified";
     }
 
     @PostMapping("/update")
