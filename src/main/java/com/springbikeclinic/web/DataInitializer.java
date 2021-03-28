@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -61,21 +62,27 @@ public class DataInitializer implements CommandLineRunner {
         Authority authorityMechanic = authorityRepository.save(Authority.builder().role("MECHANIC").build());
         Authority authorityCustomer = authorityRepository.save(Authority.builder().role("CUSTOMER").build());
 
+        String password1 = UUID.randomUUID().toString();
         userRepository.save(User.builder()
-                .email("mech@spring.dev")
-                .password(passwordEncoder.encode("wrench"))
+                .email("mech@springbikeclinic.dev")
+                .password(passwordEncoder.encode(password1))
                 .firstName("Johnny")
                 .lastName("Craftsman")
                 .authority(authorityMechanic)
+                .enabled(true)
                 .build());
+        log.info("DataInitializer Password for demo user 1: {}", password1);
 
+        String password2 = UUID.randomUUID().toString();
         userRepository.save(User.builder()
-                .email("bike@bike.com")
-                .password(passwordEncoder.encode("password"))
+                .email("bike@springbikeclinic.dev")
+                .password(passwordEncoder.encode(password2))
                 .firstName("Rad")
                 .lastName("Rider")
                 .authority(authorityCustomer)
+                .enabled(true)
                 .build());
+        log.info("DataInitializer Password for demo user 2: {}", password2);
 
         log.debug("Users Loaded: " + userRepository.count());
 
