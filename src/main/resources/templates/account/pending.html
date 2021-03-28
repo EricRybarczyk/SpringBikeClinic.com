@@ -9,21 +9,21 @@
 <div class="container main-content" layout:fragment="page-content">
 
     <div class="row">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-6 offset-md-2">
             <h1>Account Verification</h1>
         </div>
     </div>
     <div class="row mt-3">
-        <div class="col-md-6 offset-md-3">
+        <div class="col-md-6 offset-md-2">
             Please check your email for a message with a link to activate your account. The link will expire in 24 hours.
         </div>
     </div>
 
+    <script>
+        if (localStorage.getItem('activeAccountTab')) {
+            localStorage.removeItem('activeAccountTab');
+        }
+    </script>
 </div>
-<script>
-    if (localStorage.getItem('activeAccountTab')) {
-        localStorage.removeItem('activeAccountTab');
-    }
-</script>
 </body>
 </html>
