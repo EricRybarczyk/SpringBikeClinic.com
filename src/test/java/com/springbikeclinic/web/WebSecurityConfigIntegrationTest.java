@@ -8,7 +8,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
 import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.unauthenticated;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -17,20 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class WebSecurityConfigIntegrationTest {
 
-    public static final String VALID_CUSTOMER_USERNAME = "bike@bike.com";
-    public static final String VALID_CUSTOMER_PASSWORD_RAW = "password";
-
     @Autowired
     private MockMvc mockMvc;
-
-    @Test
-    void performLoginWithValidCredentials_isSuccessfullyAuthenticated() throws Exception {
-        mockMvc.perform(formLogin()
-                .user(VALID_CUSTOMER_USERNAME)
-                .password(VALID_CUSTOMER_PASSWORD_RAW))
-                .andExpect(authenticated().withAuthenticationName(VALID_CUSTOMER_USERNAME));
-
-    }
 
     @Test
     void performLoginWithInvalidCredentials_isNotAuthenticated() throws Exception {

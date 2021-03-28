@@ -1,9 +1,13 @@
 package com.springbikeclinic.web.controllers;
 
+import com.springbikeclinic.web.domain.security.Authority;
+import com.springbikeclinic.web.domain.security.OnRegistrationCompleteEvent;
 import com.springbikeclinic.web.domain.security.SecurityUser;
+import com.springbikeclinic.web.domain.security.User;
 import com.springbikeclinic.web.dto.CreateAccountDto;
 import com.springbikeclinic.web.dto.CustomerAccountDto;
-import com.springbikeclinic.web.security.StandAloneAuthenticator;
+import com.springbikeclinic.web.security.RegistrationListener;
+import com.springbikeclinic.web.security.UserVerificationService;
 import com.springbikeclinic.web.security.WithMockCustomUser;
 import com.springbikeclinic.web.services.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -15,10 +19,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.test.web.servlet.MockMvc;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,7 +42,7 @@ class AccountControllerTest {
     private static final String EXPECTED_ACCOUNT_VIEW_NAME = "account";
     private static final String EXPECTED_ACCOUNT_DETAILS_VIEW_NAME = "account/details";
     private static final String POST_CREATE_ACCOUNT_PATH = "/account/create";
-    private static final String EXPECTED_CREATE_ACCOUNT_RESULT_VIEW_NAME = "redirect:/account";
+    private static final String EXPECTED_CREATE_ACCOUNT_RESULT_VIEW_NAME = "redirect:/account/pending";
     private static final String POST_UPDATE_ACCOUNT_PATH = "/account/update";
 
     @Autowired
@@ -46,10 +52,19 @@ class AccountControllerTest {
     private UserDetailsManager userDetailsManager;
 
     @MockBean
-    private StandAloneAuthenticator standAloneAuthenticator;
+    private UserService userService;
 
     @MockBean
-    private UserService userService;
+    private UserVerificationService userVerificationService;
+
+    // Spring limitation, we can't actually verify against this ApplicationEventPublisher mock, at least as a @MockBean
+    // Source: https://github.com/spring-projects/spring-framework/issues/18907 and https://github.com/spring-projects/spring-boot/issues/6060
+    // Work-around: verify against RegistrationListener instead, so verify the event is received instead of verifying the event is sent.
+    @MockBean
+    private ApplicationEventPublisher applicationEventPublisher;
+
+    @MockBean
+    private RegistrationListener registrationListener;
 
 
     @Nested
@@ -59,6 +74,7 @@ class AccountControllerTest {
         @Test
         void postCreateAccount_withValidInput_accountIsCreated() throws Exception {
             when(userDetailsManager.userExists(any(String.class))).thenReturn(false);
+            when(userDetailsManager.loadUserByUsername(any(String.class))).thenReturn(getMockCreatedUser());
 
             final CreateAccountDto createAccountDto = getCreateAccountDto();
 
@@ -76,7 +92,19 @@ class AccountControllerTest {
 
             verify(userDetailsManager, times(1)).userExists(anyString());
             verify(userDetailsManager, times(1)).createUser(any(UserDetails.class));
-            verify(standAloneAuthenticator, times(1)).authenticateUser(any(), anyString(), anyString());
+            verify(userDetailsManager, times(1)).loadUserByUsername(any(String.class));
+            verify(registrationListener, times(1)).onApplicationEvent(any(OnRegistrationCompleteEvent.class));
+        }
+
+        private SecurityUser getMockCreatedUser() {
+            User user = User.builder()
+                    .id(1L)
+                    .firstName("first")
+                    .lastName("last")
+                    .email("a@b.com")
+                    .authorities(List.of(Authority.builder().id(123L).role("unimportant").build()))
+                    .build();
+            return new SecurityUser(user);
         }
 
         @Test
@@ -92,7 +120,7 @@ class AccountControllerTest {
                     .andExpect(view().name(EXPECTED_ACCOUNT_VIEW_NAME));
 
             verify(userDetailsManager, times(0)).createUser(any(UserDetails.class));
-            verifyNoInteractions(standAloneAuthenticator);
+            verifyNoInteractions(registrationListener);
         }
 
         @Test
@@ -112,7 +140,7 @@ class AccountControllerTest {
                     .andExpect(view().name(EXPECTED_ACCOUNT_VIEW_NAME));
 
             verifyNoInteractions(userDetailsManager);
-            verifyNoInteractions(standAloneAuthenticator);
+            verifyNoInteractions(registrationListener);
         }
 
         private CreateAccountDto getCreateAccountDto() {
