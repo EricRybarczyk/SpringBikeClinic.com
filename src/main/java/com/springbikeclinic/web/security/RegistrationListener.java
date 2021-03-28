@@ -14,7 +14,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
     @Override
     public void onApplicationEvent(OnRegistrationCompleteEvent event) {
-        userVerificationService.initiateUserVerification(event.getUser(), event.getAppUrl());
+        userVerificationService.initiateUserVerification(event.getUser(), event.getVerificationPath());
     }
 
 }

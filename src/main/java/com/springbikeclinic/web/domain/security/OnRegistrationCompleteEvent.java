@@ -7,12 +7,12 @@ import org.springframework.context.ApplicationEvent;
 public class OnRegistrationCompleteEvent extends ApplicationEvent {
 
     private final User user;
-    private final String appUrl;
+    private final String verificationPath;
 
-    public OnRegistrationCompleteEvent(Object source, User user, String appUrl) {
+    public OnRegistrationCompleteEvent(Object source, User user, String verificationPath) {
         super(source);
         this.user = user;
-        this.appUrl = appUrl;
+        this.verificationPath = verificationPath;
     }
 
 }

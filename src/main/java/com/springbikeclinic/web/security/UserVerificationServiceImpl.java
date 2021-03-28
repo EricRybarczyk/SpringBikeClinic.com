@@ -29,12 +29,16 @@ public class UserVerificationServiceImpl implements UserVerificationService {
     @Value("${verification.email.sender.address}")
     private String senderEmailAddress;
 
+    @Value("${verification.link.baseurl}")
+    private String verificationBaseUrl;
+
     @Override
-    public void initiateUserVerification(User user, String verificationUrl) {
+    public void initiateUserVerification(User user, String verificationPath) {
         String tokenValue = UUID.randomUUID().toString() + "-" + UUID.randomUUID().toString();
         verificationTokenRepository.save(new VerificationToken(user, tokenValue));
 
-        final MessageContent messageContent = messageContentService.getUserVerificationMessageBody(verificationUrl + "?token=" + tokenValue);
+        final MessageContent messageContent = messageContentService
+                .getUserVerificationMessageBody(verificationBaseUrl + verificationPath + "?token=" + tokenValue);
 
         SendMailParameters sendMailParameters = SendMailParameters.builder()
                 .recipientAddress(user.getEmail())

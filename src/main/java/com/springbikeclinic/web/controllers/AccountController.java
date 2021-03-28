@@ -19,8 +19,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.Principal;
 
 
@@ -85,27 +83,10 @@ public class AccountController {
         userDetailsManager.createUser(new SecurityUser(user));
 
         User createdUser = ((SecurityUser) userDetailsManager.loadUserByUsername(createAccountDto.getEmail())).getUser();
-        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, createdUser, getVerificationUrl(request).toString()));
+        eventPublisher.publishEvent(new OnRegistrationCompleteEvent(this, createdUser, VERIFICATION_PATH));
 
         // redirect so browser is not left on the /account/create transient path
         return "redirect:/account/pending";
-    }
-
-    private URL getVerificationUrl(HttpServletRequest request) {
-        String hostname = request.getLocalName();
-        if (hostname.equalsIgnoreCase("ip6-localhost")) {
-            hostname = "localhost";
-        }
-        try {
-            if (request.getServerPort() == 80) {
-                // don't include port if it is default 80
-                return new URL(request.getScheme(), hostname, VERIFICATION_PATH);
-            }
-            return new URL(request.getScheme(), hostname, request.getServerPort(), VERIFICATION_PATH);
-        } catch (MalformedURLException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e.getMessage());
-        }
     }
 
     @GetMapping("/pending")
