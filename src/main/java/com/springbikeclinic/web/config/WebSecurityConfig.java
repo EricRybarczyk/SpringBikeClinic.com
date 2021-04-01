@@ -21,7 +21,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests(authorize -> {
                     authorize
                             // antMatcher vs mvcMatcher: favor mvcMatcher - https://stackoverflow.com/a/57373627/798642
-                            .mvcMatchers("/h2-console/**").permitAll()  // TODO: DO NOT USE IN PRODUCTION
+                            //.mvcMatchers("/h2-console/**").permitAll()  // TODO: DO NOT USE IN PRODUCTION
                             .mvcMatchers("/", "/css/**", "/fonts/**", "/img/**").permitAll()
                             .mvcMatchers("/about", "/services", "/account", "/account/create", "/account/pending", "/account/verified","/account/expired","/account/invalid","/account/confirmToken").permitAll();
                     // NOTE: Currently we intentionally block access to /services/schedule since login will be required for this feature
@@ -47,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().csrf().ignoringAntMatchers("/h2-console/**");
 
         // H2 console config
-        http.headers().frameOptions().sameOrigin();
+        //http.headers().frameOptions().sameOrigin();
     }
 
     @Override
