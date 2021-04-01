@@ -178,7 +178,13 @@ h3 {
     margin-top: 0;
     margin-bottom: 12px;
 }
-
+.crash-bike {
+    transform: rotate(180deg);
+    font-size: 42px;
+    line-height: 48px;
+    font-weight: bold;
+    color: #f57c00;
+}
 /* -------------- Services -------------- */
 .service-type-container {
     margin: 8px 0 8px 0;

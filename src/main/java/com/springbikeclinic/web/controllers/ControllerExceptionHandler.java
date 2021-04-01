@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import javax.servlet.http.HttpServletRequest;
 
 
 @Slf4j
@@ -24,7 +25,17 @@ public class ControllerExceptionHandler {
         return modelAndView;
     }
 
+    @ExceptionHandler(Exception.class)
+    public String handleGeneralException(HttpServletRequest request, Exception e) {
+        log.error(getExceptionLogMessage(e) + ", from Request: " + getRequestInfo(request));
+        return "errors/error";
+    }
+
     private String getExceptionLogMessage(Exception e) {
         return String.format("Handling %s: %s", e.getClass().getSimpleName(), e.getMessage());
+    }
+
+    private String getRequestInfo(HttpServletRequest request) {
+        return request.getRequestURI() + (request.getQueryString() != null ? request.getQueryString() : "");
     }
 }
