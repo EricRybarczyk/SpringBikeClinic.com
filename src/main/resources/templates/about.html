@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/layout}">
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
 <head>
     <meta charset="UTF-8">
     <title>About :: Spring Bike Clinic</title>
@@ -8,7 +8,72 @@
 
 <div class="container main-content" layout:fragment="page-content">
 
-    <h1>About This Site</h1>
+    <div class="row my-3">
+        <div class="col-sm-10 offset-sm-2"><h1>About This Demo Site</h1></div>
+    </div>
+
+    <div class="row mt-2 mb-5">
+        <div class="col-sm-8 offset-sm-2">This website was built as a learning experience, focused on Spring Framework, Spring Boot and related Java technologies.
+            Enjoy your time here, but remember: <strong>there is no <em>real</em> bike clinic</strong>.</div>
+    </div>
+
+    <div class="row my-5">
+        <div class="col-sm-2 offset-sm-2">
+            <p><a href="https://spring.io" target="_blank"><img class="img-fluid" src="../static/img/spring-logo.png" th:src="@{/img/spring-logo.png}" alt="Spring logo"/></a></p>
+            <p class="mt-5"><a href="https://docs.oracle.com/en/java/javase/11/" target="_blank"><img class="img-fluid" src="../static/img/java-logo-text-sm.png" th:src="@{/img/java-logo-text-sm.png}" alt="Java logo"/></a></p>
+        </div>
+        <div class="col-sm-6"><p>This site was built with <a href="https://spring.io" target="_blank">Spring Boot</a> and Spring MVC, using
+            <a href="https://docs.oracle.com/en/java/javase/11/" target="_blank">Java 11</a>. Data access is implemented with Spring Data JPA and
+            <a href="https://hibernate.org" target="_blank">Hibernate</a>.
+            Spring Security provides the authentication and authorization framework. The UI is implemented with <a href="https://www.thymeleaf.org" target="_blank">Thymeleaf</a>
+            and <a href="https://getbootstrap.com" target="_blank">Bootstrap</a>.</p>
+
+            <p>While the <a href="https://spring-petclinic.github.io" target="_blank">Spring Pet Clinic</a> reference application provided the initial inspiration for this project, the work here is my own.
+                For example, the site navigation design is clearly borrowed, but it is also an independent implementation - not a copy &amp; paste exercise.</p></div>
+    </div>
+
+    <div class="row mt-5 mb-4">
+        <div class="col-sm-2 offset-sm-2"><a href="https://aws.amazon.com" target="_blank"><img class="img-fluid" src="../static/img/aws-logo-sm.png" th:src="@{/img/aws-logo-sm.png}" alt="AWS logo"/></a></div>
+        <div class="col-sm-6"><p>The site is hosted on <a href="https://aws.amazon.com/" target="_blank">Amazon Web Services</a> (AWS) and the Elastic Beanstalk service in particular.
+            The Spring application JAR is running on Amazon's Corretto 11, on 64bit Amazon Linux 2.</p>
+            <p>Additional AWS services utilized include:</p>
+            <ul>
+                <li>IAM: Identity &amp Access Management</li>
+                <li>EC2: Elastic Compute Cloud</li>
+                <li>RDS: Relational Database Service</li>
+                <li>SES: Simple Email Service</li>
+                <li>SNS: Simple Notification Service</li>
+                <li>Amazon Route 53 for DNS</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-sm-6 offset-sm-3 text-center">
+            Additional technologies utilized include:
+        </div>
+    </div>
+    <div class="row mb-5 align-items-center">
+        <div class="col-sm-2 offset-sm-3 text-center"><a href="https://www.mysql.com" target="_blank"><img class="img-fluid" src="../static/img/mysql-logo.png" th:src="@{/img/mysql-logo.png}" alt="MySQL logo"/></a></div>
+        <div class="col-sm-2 text-center ml-2"><a href="https://junit.org" target="_blank"><img class="img-fluid" src="../static/img/JUnit5-logo.png" th:src="@{/img/JUnit5-logo.png}" alt="JUnit logo"/></a></div>
+        <div class="col-sm-2 text-center"><a href="https://site.mockito.org/" target="_blank"><img class="img-fluid" src="../static/img/mockito-logo.png" th:src="@{/img/mockito-logo.png}" alt="Mockito logo"/></a></div>
+    </div>
+
+    <div class="row my-5">
+        <div class="col-sm-2 offset-sm-2 text-center"><a href="https://lineicons.com/" target="_blank"><img class="img-fluid" src="../static/img/lineicons.svg" th:src="@{/img/lineicons.svg}"
+                                                              alt="Line Icons logo"/></a></div>
+        <div class="col-sm-6">The elegant icons used on the site, including the <span class="lni lni-16 lni-bi-cycle mx-1"></span> logo, are from <a href="https://lineicons.com/" target="_blank">LineIcons</a>.
+            The free version is quite useful, and the Pro version adds significant value for a reasonable cost.</div>
+        <div class="col-sm-2"></div>
+    </div>
+
+    <div class="row my-5">
+        <div class="col-sm-2 offset-sm-2 text-center"><img class="img-fluid" src="../static/img/syd-and-macky.jpg" th:src="@{/img/syd-and-macky.jpg}" alt="Syd and Macky logo" /></div>
+        <div class="col-sm-6"><p>One more <strong>Thank You</strong> to <a href="https://www.youtube.com/sydandmacky" target="_blank">Syd &amp Macky</a>
+            for letting me use one of their bike photos on the home page of this site.</p>
+            <p>Remember everyone, #bemoreawesome</p></div>
+    </div>
+
 
 </div>
 
