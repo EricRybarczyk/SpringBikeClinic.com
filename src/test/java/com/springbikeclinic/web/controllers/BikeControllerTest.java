@@ -165,7 +165,7 @@ class BikeControllerTest {
                 .with(csrf()))
                 .andExpect(status().isNotFound())
                 .andExpect(model().attributeExists("errorMessage"))
-                .andExpect(view().name("errors/error404"));
+                .andExpect(view().name("error/404"));
 
         verify(bikeService, times(1)).save(any(BikeDto.class), anyLong());
     }
@@ -188,7 +188,7 @@ class BikeControllerTest {
         mockMvc.perform(get(GET_BIKES_BASE_PATH + "/delete/9999"))
                 .andExpect(status().isNotFound())
                 .andExpect(model().attributeExists("errorMessage"))
-                .andExpect(view().name("errors/error404"));
+                .andExpect(view().name("error/404"));
 
         verify(bikeService, times(1)).deleteBikeForUser(anyLong(), anyLong());
     }

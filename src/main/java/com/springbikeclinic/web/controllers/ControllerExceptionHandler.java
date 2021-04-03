@@ -21,14 +21,14 @@ public class ControllerExceptionHandler {
         log.error(getExceptionLogMessage(e));
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("errorMessage", e.getMessage());
-        modelAndView.setViewName("errors/error404");
+        modelAndView.setViewName("error/404");
         return modelAndView;
     }
 
     @ExceptionHandler(Exception.class)
     public String handleGeneralException(HttpServletRequest request, Exception e) {
         log.error(getExceptionLogMessage(e) + ", from Request: " + getRequestInfo(request));
-        return "errors/error";
+        return "error/error";
     }
 
     private String getExceptionLogMessage(Exception e) {
