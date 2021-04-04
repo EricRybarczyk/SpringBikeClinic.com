@@ -1,16 +1,14 @@
 package com.springbikeclinic.web.controllers;
 
-import com.springbikeclinic.web.domain.security.OnRegistrationCompleteEvent;
-import com.springbikeclinic.web.domain.security.SecurityUser;
-import com.springbikeclinic.web.domain.security.User;
-import com.springbikeclinic.web.dto.CreateAccountDto;
-import com.springbikeclinic.web.dto.CustomerAccountDto;
-import com.springbikeclinic.web.dto.LoginDto;
+import com.springbikeclinic.web.domain.security.*;
+import com.springbikeclinic.web.dto.*;
+import com.springbikeclinic.web.security.PasswordResetService;
 import com.springbikeclinic.web.security.UserVerificationService;
 import com.springbikeclinic.web.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,14 +29,16 @@ public class AccountController {
     private final UserDetailsManager userDetailsManager;
     private final UserService userService;
     private final UserVerificationService userVerificationService;
+    private final PasswordResetService passwordResetService;
     private final ApplicationEventPublisher eventPublisher;
 
     private static final String MODEL_ATTRIBUTE_CUSTOMER_ACCOUNT = "customerAccountDto";
     private static final String VERIFICATION_PATH = "/account/confirmToken";
+    private static final String RESET_PASSWORD_PATH = "/account/resetPassword";
 
     @InitBinder
     public void setAllowedFields(WebDataBinder dataBinder) {
-        dataBinder.setAllowedFields("email", "firstName", "lastName", "createPassword", "confirmPassword");
+        dataBinder.setAllowedFields("email", "firstName", "lastName", "createPassword", "confirmPassword", "emailAddress", "token", "newPassword");
     }
 
     @GetMapping("")
@@ -96,13 +96,13 @@ public class AccountController {
 
     @GetMapping("/confirmToken")
     public String processVerificationToken(@RequestParam("token") String token) {
-
         switch (userVerificationService.verifyUser(token)) {
             case INVALID:
                 return "account/invalid";
             case EXPIRED:
                 return "account/expired";
             default:
+                // intentionally covers SUCCESS and UNNECESSARY results
                 return "redirect:/account/verified";
         }
     }
@@ -128,4 +128,57 @@ public class AccountController {
         return "account/details";
     }
 
+    @GetMapping("/reset")
+    public String getResetPassword(Model model) {
+        model.addAttribute("resetPasswordRequestDto", new ResetPasswordRequestDto());
+        return "account/reset";
+    }
+
+    @PostMapping("/reset")
+    public String requestResetPassword(@ModelAttribute("resetPasswordDto") @Valid ResetPasswordRequestDto resetPasswordRequestDto, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(e -> log.debug(e.toString()));
+            return "account/reset";
+        }
+        try {
+            final SecurityUser securityUser = (SecurityUser) userDetailsManager.loadUserByUsername(resetPasswordRequestDto.getEmailAddress());
+
+            eventPublisher.publishEvent(new OnPasswordResetRequestEvent(this, securityUser.getUser(), RESET_PASSWORD_PATH));
+
+            // redirect so browser is not left on the /account/reset transient path
+            return "redirect:/account/reset/pending";
+
+        } catch (UsernameNotFoundException e) {
+            log.error("Requested username {} was not found, UsernameNotFoundException: {}", resetPasswordRequestDto.getEmailAddress(), e.getMessage());
+            model.addAttribute("resetPasswordDto", new ResetPasswordRequestDto(resetPasswordRequestDto.getEmailAddress()));
+            return "account/reset";
+        }
+    }
+
+    @GetMapping("/reset/pending")
+    public String showPasswordResetPending() {
+        return "account/resetPending";
+    }
+
+    @GetMapping("/resetPassword")
+    public String preparePasswordReset(@RequestParam("token") String token, Model model) {
+        final PasswordResetToken passwordResetToken = passwordResetService.getPasswordResetToken(token);
+        model.addAttribute("resetPasswordResultDto", new ResetPasswordResultDto(token));
+        return "account/passwordReset";
+    }
+
+    @PostMapping("/resetPassword")
+    public String processPasswordReset(@ModelAttribute("resetPasswordResultDto") @Valid ResetPasswordResultDto resetPasswordResultDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(e -> log.debug(e.toString()));
+            return "account/passwordReset";
+        }
+        // re-verify the token
+        final PasswordResetToken passwordResetToken = passwordResetService.getPasswordResetToken(resetPasswordResultDto.getToken());
+
+        // change the password for the User
+        passwordResetService.processPasswordReset(passwordResetToken, resetPasswordResultDto.getNewPassword());
+
+        return "account/resetComplete";
+    }
 }

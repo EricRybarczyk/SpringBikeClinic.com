@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" layout:decorate="~{layout/layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Reset Password Complete :: Spring Bike Clinic</title>
+</head>
+<body>
+<div class="container main-content" layout:fragment="page-content">
+
+    <div class="row">
+        <div class="col-md-6 offset-md-2">
+            <h2>Reset Password Complete</h2>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-10 offset-md-2">
+
+            <p>Your password has been updated.</p>
+
+            <p>Please use your new password when you <a th:href="@{/account}">log in</a></p>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

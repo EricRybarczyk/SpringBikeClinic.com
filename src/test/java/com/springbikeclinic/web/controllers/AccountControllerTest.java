@@ -1,14 +1,9 @@
 package com.springbikeclinic.web.controllers;
 
-import com.springbikeclinic.web.domain.security.Authority;
-import com.springbikeclinic.web.domain.security.OnRegistrationCompleteEvent;
-import com.springbikeclinic.web.domain.security.SecurityUser;
-import com.springbikeclinic.web.domain.security.User;
+import com.springbikeclinic.web.domain.security.*;
 import com.springbikeclinic.web.dto.CreateAccountDto;
 import com.springbikeclinic.web.dto.CustomerAccountDto;
-import com.springbikeclinic.web.security.RegistrationListener;
-import com.springbikeclinic.web.security.UserVerificationService;
-import com.springbikeclinic.web.security.WithMockCustomUser;
+import com.springbikeclinic.web.security.*;
 import com.springbikeclinic.web.services.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -44,6 +39,9 @@ class AccountControllerTest {
     private static final String POST_CREATE_ACCOUNT_PATH = "/account/create";
     private static final String EXPECTED_CREATE_ACCOUNT_RESULT_VIEW_NAME = "redirect:/account/pending";
     private static final String POST_UPDATE_ACCOUNT_PATH = "/account/update";
+    private static final String EXPECTED_PASSWORD_RESET_VIEW_NAME = "account/reset";
+    private static final String EXPECTED_PASSWORD_RESET_PENDING_VIEW_NAME = "account/resetPending";
+    private static final String EXPECTED_PASSWORD_RESET_FORM_VIEW_NAME = "account/passwordReset";
 
     @Autowired
     private MockMvc mockMvc;
@@ -56,6 +54,9 @@ class AccountControllerTest {
 
     @MockBean
     private UserVerificationService userVerificationService;
+
+    @MockBean
+    private PasswordResetService passwordResetService;
 
     // Spring limitation, we can't actually verify against this ApplicationEventPublisher mock, at least as a @MockBean
     // Source: https://github.com/spring-projects/spring-framework/issues/18907 and https://github.com/spring-projects/spring-boot/issues/6060
@@ -228,4 +229,135 @@ class AccountControllerTest {
 
     }
 
+
+    @Nested
+    @DisplayName("Password Reset")
+    class PasswordResetTests {
+
+        @Test
+        void getResetPassword_asAnonymousUser_isOk() throws Exception {
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/reset"))
+                    .andExpect(status().isOk())
+                    .andExpect(model().attributeExists("resetPasswordRequestDto"))
+                    .andExpect(view().name(EXPECTED_PASSWORD_RESET_VIEW_NAME));
+        }
+
+        @WithMockCustomUser
+        @Test
+        void getResetPassword_asAuthenticated_isOk() throws Exception {
+            // this is not exactly designed, but it is allowed and should work
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/reset"))
+                    .andExpect(status().isOk())
+                    .andExpect(model().attributeExists("resetPasswordRequestDto"))
+                    .andExpect(view().name(EXPECTED_PASSWORD_RESET_VIEW_NAME));
+        }
+
+        @Test
+        void getPasswordResetForm_asAnonymousUser_isOk() throws Exception {
+            when(passwordResetService.getPasswordResetToken(anyString())).thenReturn(new PasswordResetToken(new User(), "mock-token"));
+
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/resetPassword?token=mock-token-value"))
+                    .andExpect(status().isOk())
+                    .andExpect(model().attributeExists("resetPasswordResultDto"))
+                    .andExpect(view().name(EXPECTED_PASSWORD_RESET_FORM_VIEW_NAME));
+        }
+
+        @WithMockCustomUser
+        @Test
+        void getPasswordResetForm_asAuthenticated_isOk() throws Exception {
+            // this is not exactly designed, but it is allowed
+
+            when(passwordResetService.getPasswordResetToken(anyString())).thenReturn(new PasswordResetToken(new User(), "mock-token"));
+
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/resetPassword?token=mock-token-value"))
+                    .andExpect(status().isOk())
+                    .andExpect(model().attributeExists("resetPasswordResultDto"))
+                    .andExpect(view().name(EXPECTED_PASSWORD_RESET_FORM_VIEW_NAME));
+        }
+
+        @Test
+        void getPendingPasswordReset_asAnonymousUser_isOk() throws Exception {
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/reset/pending"))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name(EXPECTED_PASSWORD_RESET_PENDING_VIEW_NAME));
+        }
+
+        @WithMockCustomUser
+        @Test
+        void getPendingPasswordReset_asAuthenticated_isOk() throws Exception {
+            // this is not exactly designed, but it is allowed and should work
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/reset/pending"))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name(EXPECTED_PASSWORD_RESET_PENDING_VIEW_NAME));
+        }
+    }
+
+
+    @Nested
+    @DisplayName("Account Verification")
+    class AccountVerificationTests {
+
+        @Test
+        void testGetAccountPendingView() throws Exception {
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/pending"))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("account/pending"));
+        }
+
+        @Test
+        void testGetAccountVerifiedView() throws Exception {
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/verified"))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("account/verified"));
+        }
+
+        @Test
+        void testConfirmTokenRequest_withValidToken_accountVerifiedDisplayed() throws Exception {
+            when(userVerificationService.verifyUser(anyString())).thenReturn(UserVerificationResult.SUCCESS);
+            final String MOCK_TOKEN = "mock-token-value";
+
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/confirmToken?token=" + MOCK_TOKEN))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(view().name("redirect:/account/verified"));
+
+            verify(userVerificationService, times(1)).verifyUser(MOCK_TOKEN);
+        }
+
+        @Test
+        void testConfirmTokenRequest_alreadyVerified_accountVerifiedDisplayed() throws Exception {
+            when(userVerificationService.verifyUser(anyString())).thenReturn(UserVerificationResult.UNNECESSARY);
+            final String MOCK_TOKEN = "already-verified-token-value";
+
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/confirmToken?token=" + MOCK_TOKEN))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(view().name("redirect:/account/verified"));
+
+            verify(userVerificationService, times(1)).verifyUser(MOCK_TOKEN);
+        }
+
+        @Test
+        void testConfirmTokenRequest_withExpiredToken_tokenExpiredDisplayed() throws Exception {
+            when(userVerificationService.verifyUser(anyString())).thenReturn(UserVerificationResult.EXPIRED);
+            final String MOCK_TOKEN = "expired-token-value";
+
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/confirmToken?token=" + MOCK_TOKEN))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("account/expired"));
+
+            verify(userVerificationService, times(1)).verifyUser(MOCK_TOKEN);
+        }
+
+        @Test
+        void testConfirmTokenRequest_withInvalidToken_tokenInvalidDisplayed() throws Exception {
+            when(userVerificationService.verifyUser(anyString())).thenReturn(UserVerificationResult.INVALID);
+            final String MOCK_TOKEN = "invalid-token-value";
+
+            mockMvc.perform(get(GET_ACCOUNT_BASE_PATH + "/confirmToken?token=" + MOCK_TOKEN))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("account/invalid"));
+
+            verify(userVerificationService, times(1)).verifyUser(MOCK_TOKEN);
+        }
+
+    }
 }

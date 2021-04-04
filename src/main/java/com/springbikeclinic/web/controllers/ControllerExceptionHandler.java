@@ -1,5 +1,6 @@
 package com.springbikeclinic.web.controllers;
 
+import com.springbikeclinic.web.exceptions.ExpiredTokenException;
 import com.springbikeclinic.web.exceptions.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,16 @@ public class ControllerExceptionHandler {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("errorMessage", e.getMessage());
         modelAndView.setViewName("error/404");
+        return modelAndView;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ExpiredTokenException.class)
+    public ModelAndView handleExpiredToken(Exception e) {
+        log.error(getExceptionLogMessage(e));
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("errorMessage", e.getMessage());
+        modelAndView.setViewName("error/400");
         return modelAndView;
     }
 
