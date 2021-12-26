@@ -5,5 +5,5 @@
 This website was built as a learning experience, focused on Spring Framework, 
 Spring Boot and related Java technologies.
 
-More details are available at the AWS-hosted version, 
-[https://springbikeclinic.com](https://springbikeclinic.com/about)
+More details are available on my website, 
+[https://ericrybarczyk.com/projects/](https://ericrybarczyk.com/projects/)
